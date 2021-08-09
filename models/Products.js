@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7086a41dc101902ad51fe0476de63f5343d27d4b
 const { Schema, model } = require('mongoose');
 
 const productSchema = new Schema({
