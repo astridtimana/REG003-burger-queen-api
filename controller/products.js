@@ -3,7 +3,7 @@ const Product = require('../models/Products')
 const getProduct = (rep, res) => {
   let productId = req.params.productId
 
-  User.findById(productId, (err, product)=>{
+  Product.findById(productId, (err, product)=>{
     if (err) return res.status(500).send({message:`Error en la petición productID`})
     if (!product) return res.status(404).send({message:`No producto no existe`})
 
@@ -22,10 +22,12 @@ const saveProduct= (req, res) => {
   console.log('POST/api/product')
   console.log(req.body)
 
-  let product = new User()
+  let product = new Product()
   product.name = req.body.name
-  product.password = req.body.password
-  product.roles = req.body.roles
+  product.price = req.body.price
+  product.image = req.body.image
+  product.type = req.body.type
+  product.dateEntry = req.body.dateEntry
 
   product.save((err, productStored) => {
     if (err) res.status(500).send({message:`Error al salvar en la base de datos el prpducto`})
@@ -44,7 +46,7 @@ const updateProduct = (req, res) => {
   })
 }
 const deleteProduct = (req, res) => {
-  let productId = req.params.userId
+  let productId = req.params.productId
 
   Product.findById(productId, (err, product) => {
     if (err) res.status(500).send({message:`Error al borrar al producto`})
