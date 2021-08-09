@@ -7,7 +7,11 @@
     "ecmaVersion": 2018
   },
   "rules": {
+<<<<<<< HEAD
     "linebreak-style": [0, "error", "unix"],
+=======
+    "linebreak-style": [0,"error", "unix"],
+>>>>>>> cac833abd3678d13c34e0eb3393c42bf51c5d73b
     "no-underscore-dangle": "off",
     "consistent-return": "off",
     "no-shadow": "off",
