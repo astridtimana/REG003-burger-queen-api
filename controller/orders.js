@@ -22,7 +22,7 @@ const saveOrder= (req, res) => {
   console.log('POST/api/order')
   console.log(req.body)
 
-  let order = new User()
+  let order = new Order()
   order.userId = req.body.userId
   order.client = req.body.client
   order.products = req.body.products
