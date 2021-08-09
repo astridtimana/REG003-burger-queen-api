@@ -7,8 +7,6 @@ const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
 
-const ProductCtrl = require('./controller/users') //add_carlaDev
-
 const { port, dbUrl, secret } = config;
 mongoose
   .connect(dbUrl, {

@@ -1,4 +1,4 @@
-const User = require('../models/user')
+const User = require('../models/Users')
 
 const getUser = (rep, res) => {
   let userId = req.params.userId
@@ -23,13 +23,12 @@ const saveUser= (req, res) => {
   console.log(req.body)
 
   let user = new User()
-  user.name = req.body.name
   user.email = req.body.email
-  user.psw = req.body.psw
-  user.rol = req.body.rol
+  user.password = req.body.password
+  user.roles = req.body.roles
 
   user.save((err, userStored) => {
-    if (err) res.status(500).send({message:`Erroral salvar en la base de datos`})
+    if (err) res.status(500).send({message:`Error al salvar en la base de datos`})
 
     res.status(200).send({user: userStored })
   })
@@ -51,13 +50,19 @@ const deleteuser = (req, res) => {
     if (err) res.status(500).send({message:`Error al borrar al usuario`})
 
     user.remove(err => {
-      if (err) res.status(500).send({message:`Error al borrar el usario`})
+      if (err) res.status(500).send({message:`Error al borrar el usuario`})
       res.status(200).send({message:`El usuario a sido eliminado`})
     })
   })
 }
 
-
+ module.exports = {
+  getUser,
+  getUsers,
+  saveUser,
+  deleteuser,
+  updatUser
+}
 // module.exports = {
 //   getUsers: (req, resp, next) => {
 //   },
