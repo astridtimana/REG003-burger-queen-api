@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-  
-=======
->>>>>>> f3e8ea3c95c9e4200937918e77454f42786f44d4
 const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema({
@@ -18,7 +14,6 @@ const userSchema = new Schema({
     //trim(?)
   },
   roles: {
-<<<<<<< HEAD
     admin: {
       type: Boolean,
     },
@@ -26,10 +21,3 @@ const userSchema = new Schema({
 });
 
 module.exports = model('Users', productSchema);
-=======
-      type: Boolean,
-  },
-});
-
-module.exports = model('Users', userSchema);
->>>>>>> f3e8ea3c95c9e4200937918e77454f42786f44d4
