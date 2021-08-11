@@ -6,10 +6,12 @@ const orders = require('./orders');
 const Users = require('../models/Users')
 const express = require('express');
 const orderCtrl = require('../controller/orders') 
-const UserCtrl = require('../controller/users') 
+const UserCtrl = require('../controller/users.js') 
 const ProductCtrl = require('../controller/products')
 // ******************
 const app = express();
+const authentication = require('../middleware/auth')
+
 
 const root = (app, next) => {
   const pkg = app.get('pkg');
@@ -33,6 +35,10 @@ const root = (app, next) => {
   app.post('/product',ProductCtrl.saveProduct)
   app.delete('/product/:productId',ProductCtrl.deleteProduct)
   app.put('/product/:productId',ProductCtrl.updateProduct)
+  
+  app.get('/private', authentication.isAuthenticated ,function(req,res){
+    res.status(200).send({message:'Tienes acceso'})
+  })
 
   app.all('*', (req, resp, nextAll) => nextAll(404));
   return next();

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const config = require('../config')
 
 module.exports = (secret) => (req, resp, next) => {
   const { authorization } = req.headers;
@@ -23,10 +24,21 @@ module.exports = (secret) => (req, resp, next) => {
 };
 
 
-module.exports.isAuthenticated = (req) => (
-  // TODO: decidir por la informacion del request si la usuaria esta autenticada
-  false
-);
+module.exports.isAuthenticated = (req, res, next) => {
+    if(!req.headers.authorization){
+      return res.status(403).send({message:'No tienes autorización'})
+    }
+
+    const token = req.headers.authorization.split("")[1];
+    const payload = jwt.verify(token, config.secret);
+
+    if(payload.iat + payload.expiresIn <= new Date()){
+      return res.status(401).send({message:'El token ha expirado'})
+    }
+    
+    req.user= payload.id
+    next()
+};
 
 
 module.exports.isAdmin = (req) => (
