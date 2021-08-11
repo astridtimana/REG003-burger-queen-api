@@ -1,6 +1,6 @@
 const User = require('../models/Users')
 
-const getUser = (rep, res) => {
+const getUser = (req, res) => {
   let userId = req.params.userId
 
   User.findById(userId, (err, user)=>{
@@ -25,7 +25,7 @@ const saveUser= (req, res) => {
   let user = new User()
   user.email = req.body.email
   user.password = req.body.password
-  user.roles = req.body.roles
+  user.roles.admin = req.body.roles.admin
 
   user.save((err, userStored) => {
     if (err) res.status(500).send({message:`Error al salvar en la base de datos`})

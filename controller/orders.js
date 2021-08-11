@@ -1,6 +1,6 @@
 const Order = require('../models/Orders')
 
-const getOrder = (rep, res) => {
+const getOrder = (req, res) => {
   let orderId = req.params.orderId
 
   Order.findById(orderId, (err, order)=>{
@@ -38,7 +38,7 @@ const saveOrder= (req, res) => {
 }
 const updateOrder = (req, res) => {
   let orderId = req.params.orderId
-  let update = rep.body
+  let update = req.body
 
   Order.findByIdAndUpdate(orderId, update, (err, orderUpdated) => {
     if (err) res.status(500).send({message:`Error al actualizar el order`})

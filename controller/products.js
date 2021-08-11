@@ -1,6 +1,6 @@
 const Product = require('../models/Products')
 
-const getProduct = (rep, res) => {
+const getProduct = (req, res) => {
   let productId = req.params.productId
 
   Product.findById(productId, (err, product)=>{
