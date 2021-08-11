@@ -14,7 +14,9 @@ const userSchema = new Schema({
     //trim(?)
   },
   roles: {
-    admin: { type: Boolean },
+    admin: {
+      type: Boolean,
+    },
   },
 });
 

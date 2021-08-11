@@ -1,11 +1,7 @@
 version: "3"
 services:
   db:
-    # TODO: configura tu imagen de base de datos, te recomendamos una de estas:
-    # https://hub.docker.com/_/mongo
-    # https://hub.docker.com/_/postgres
-    # https://hub.docker.com/_/mysql
-    image: mongo
+    image: mongo:4
     volumes:
       - ./db-data:/data/db
     environment:

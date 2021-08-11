@@ -10,6 +10,7 @@ const getProduct = (req, res) => {
     res.status(200).send({ product })
   })
 }
+
 const getProducts = (req, res) => {
     Product.find({}, (err, products) => {
     if (err) return res.status(500).send({message: `Error en la petición colecctionProducts`})
@@ -18,6 +19,8 @@ const getProducts = (req, res) => {
     res.send(200, { products })
   })
 }
+
+
 const saveProduct= (req, res) => {
   console.log('POST/api/product')
   console.log(req.body)
@@ -35,9 +38,10 @@ const saveProduct= (req, res) => {
     res.status(200).send({product: productStored })
   })
 }
+
 const updateProduct = (req, res) => {
   let productId = req.params.productId
-  let update = rep.body
+  let update = req.body
 
   Product.findByIdAndUpdate(productId, update, (err, productUpdated) => {
     if (err) res.status(500).send({message:`Error al actualizar el producto`})
