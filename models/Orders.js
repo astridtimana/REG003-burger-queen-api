@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const mongoose = require('mongoose');
 
 const orderSchema = new Schema({
   
@@ -13,7 +12,7 @@ const orderSchema = new Schema({
     },
     products: [{
       qty: { type: Number},
-      product: { type: mongoose.ObjectId },
+      product: { type: Object },
 
     }],
     status: {
