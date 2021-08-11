@@ -5,8 +5,8 @@ const orders = require('./orders');
 
 const Users = require('../models/Users')
 const express = require('express');
-const ProductCtrl = require('../controller/users') //add_carlaDev
-
+const UserCtrl = require('../controller/users') 
+const ProductCtrl = require('../controller/products')
 // ******************
 const app = express();
 
@@ -14,8 +14,19 @@ const root = (app, next) => {
   const pkg = app.get('pkg');
   app.get('/', (req, res) => res.json({ name: pkg.name, version: pkg.version }));
   /****************** */
-  app.get('/user', ProductCtrl.getUsers) 
-  app.post('/createUser', ProductCtrl.saveUser) 
+
+  //USERS
+  app.get('/user', UserCtrl.getUsers) 
+  app.get('/userId/:userId', UserCtrl.getUser) 
+  app.post('/createUser', UserCtrl.saveUser) 
+  app.delete('/deleteUser/:userId', UserCtrl.deleteuser)
+
+  //PRODUCTS
+  app.get('/product',ProductCtrl.getProducts)
+  app.get('/product/:productId',ProductCtrl.getProduct)
+  app.post('/product',ProductCtrl.saveProduct)
+  app.delete('/product/:productId',ProductCtrl.deleteProduct)
+  app.put('/product/:productId',ProductCtrl.updateProduct)
 
   app.all('*', (req, resp, nextAll) => nextAll(404));
   return next();

@@ -20,4 +20,4 @@ const userSchema = new Schema({
   },
 });
 
-module.exports = model('Users', productSchema);
+module.exports = model('Users', userSchema);
