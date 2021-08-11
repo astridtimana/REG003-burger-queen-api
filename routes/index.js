@@ -8,6 +8,8 @@ const express = require('express');
 const orderCtrl = require('../controller/orders') 
 const UserCtrl = require('../controller/users.js') 
 const ProductCtrl = require('../controller/products')
+const AuthCtrl = require('../controller/auth')
+
 // ******************
 const app = express();
 const authentication = require('../middleware/auth')
@@ -36,9 +38,11 @@ const root = (app, next) => {
   app.delete('/product/:productId',ProductCtrl.deleteProduct)
   app.put('/product/:productId',ProductCtrl.updateProduct)
   
+  //PRUEBAS
   app.get('/private', authentication.isAuthenticated ,function(req,res){
     res.status(200).send({message:'Tienes acceso'})
   })
+  app.post('/createUser2', AuthCtrl.signUp )
 
   app.all('*', (req, resp, nextAll) => nextAll(404));
   return next();

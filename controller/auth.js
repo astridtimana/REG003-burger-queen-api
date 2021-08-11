@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const service = require('../services')
-const User = require('../models/user')
+const User = require('../models/Users')
 
 function signUp(req,res){
     const user = new User({

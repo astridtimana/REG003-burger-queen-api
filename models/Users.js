@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const { Schema, model } = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
 
@@ -20,10 +22,11 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.pre('save', (next)=>{
+userSchema.pre('save', function(next){
 
   let user = this
   if(!user.isModified('password')) return next()
+
   bcrypt.genSalt(10,(err,salt)=>{
     if(err) return next()
     bcrypt.hash(user.password,salt, null,(err,hash)=>{
