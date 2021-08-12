@@ -39,10 +39,11 @@ const root = (app, next) => {
   app.put('/product/:productId',ProductCtrl.updateProduct)
   
   //PRUEBAS
-  app.get('/private', authentication.isAuthenticated ,function(req,res){
+  app.get('/private', authentication ,function(req,res){
     res.status(200).send({message:'Tienes acceso'})
   })
-  app.post('/createUser2', AuthCtrl.signUp )
+  app.post('/signup', AuthCtrl.signUp )
+  app.post('/signin', AuthCtrl.signIn )
 
   app.all('*', (req, resp, nextAll) => nextAll(404));
   return next();

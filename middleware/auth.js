@@ -1,20 +1,23 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config')
 
-module.exports = (secret) => (req, resp, next) => {
+module.exports = (secret) => (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return next();
+    return res.status(403).send({message:'No tienes autorización'})
+    //return next();
   }
 
   const [type, token] = authorization.split(' ');
 
   if (type.toLowerCase() !== 'bearer') {
-    return next();
+    return res.status(400).send({message:'Type no es "bearer" '})
+    //return next();
   }
 
   jwt.verify(token, secret, (err, decodedToken) => {
+    console.log(decodedToken)
     if (err) {
       return next(403);
     }
@@ -24,20 +27,21 @@ module.exports = (secret) => (req, resp, next) => {
 };
 
 
-module.exports.isAuthenticated = (req, res, next) => {
-    if(!req.headers.authorization){
-      return res.status(403).send({message:'No tienes autorización'})
-    }
+module.exports.isAuthenticated = (req) => {
+    // req.authToken || false
+    // if(!req.headers.authorization){
+    //   return res.status(403).send({message:'No tienes autorización'})
+    // }
 
-    const token = req.headers.authorization.split("")[1];
-    const payload = jwt.verify(token, config.secret);
+    // const token = req.headers.authorization.split("")[1];
+    // const payload = jwt.verify(token, config.secret);
 
-    if(payload.iat + payload.expiresIn <= new Date()){
-      return res.status(401).send({message:'El token ha expirado'})
-    }
+    // if(payload.iat + payload.expiresIn <= new D  ate()){
+    //   return res.status(401).send({message:'El token ha expirado'})
+    // }
     
-    req.user= payload.id
-    next()
+    // req.user= payload.id
+    // next()
 };
 
 

@@ -6,7 +6,7 @@ function signUp(req,res){
     const user = new User({
         email: req.body.email,
         password:req.body.password,
-        admin: req.body.roles.admin
+        roles: req.body.roles
     })
 
     user.save((err)=>{
