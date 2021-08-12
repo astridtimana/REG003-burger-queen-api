@@ -109,7 +109,7 @@ module.exports = () => new Promise((resolve, reject) => {
     return resolve();
   }
 
-  // TODO: Configurar DB de tests
+  // TODO: Configurar DB de tests JEST MONGO O MONGO-MEMORY-SERVER
 
   console.info('Staring local server...');
   const child = spawn('npm', ['start', process.env.PORT || 8888], {

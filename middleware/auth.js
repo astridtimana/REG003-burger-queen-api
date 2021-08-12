@@ -18,8 +18,7 @@ module.exports = (secret) => (req, resp, next) => {
     if (err) {
       return next(403);
     }
-
-    // TODO: Verificar identidad del usuario usando `decodeToken.uid`
+    // TODO: Verificar identidad del usuario usando `decodeToken.uid` 2nd
   });
 };
 
@@ -42,7 +41,7 @@ module.exports.isAuthenticated = (req, res, next) => {
 
 
 module.exports.isAdmin = (req) => (
-  // TODO: decidir por la informacion del request si la usuaria es admin
+  // TODO: decidir por la informacion del request si la usuaria es admin 3rd
   false
 );
 
