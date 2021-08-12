@@ -1,20 +1,24 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config')
 
-module.exports = (secret) => (req, resp, next) => {
+module.exports = (secret) => (req, res, next) => {
   const { authorization } = req.headers;
+  //console.log(req)
 
   if (!authorization) {
-    return next();
+    return res.status(403).send({message:'No tienes autorización'})
+    //return next();
   }
 
   const [type, token] = authorization.split(' ');
 
   if (type.toLowerCase() !== 'bearer') {
-    return next();
+    return res.status(400).send({message:'Type no es "bearer" '})
+    //return next();
   }
 
   jwt.verify(token, secret, (err, decodedToken) => {
+    console.log(decodedToken)
     if (err) {
       return next(403);
     }
@@ -23,20 +27,12 @@ module.exports = (secret) => (req, resp, next) => {
 };
 
 
-module.exports.isAuthenticated = (req, res, next) => {
-    if(!req.headers.authorization){
-      return res.status(403).send({message:'No tienes autorización'})
-    }
+module.exports.isAuthenticated = (req) => {
 
-    const token = req.headers.authorization.split("")[1];
-    const payload = jwt.verify(token, config.secret);
+  // TODO: decidir por la informacion del request si la usuaria esta autenticada
 
-    if(payload.iat + payload.expiresIn <= new Date()){
-      return res.status(401).send({message:'El token ha expirado'})
-    }
+  req.token || false
     
-    req.user= payload.id
-    next()
 };
 
 

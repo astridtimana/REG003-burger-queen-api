@@ -3,11 +3,12 @@ const service = require('../services')
 const User = require('../models/Users')
 
 function signUp(req,res){
+    const {email, password, roles} = req.body;
     const user = new User({
-        email: req.body.email,
-        password:req.body.password,
-        admin: req.body.roles.admin
-    })
+        email: email,
+        password: password,
+        roles: roles
+    });
 
     user.save((err)=>{
         if(err) return res.status(500).send({message: `Error: ${err}`})
