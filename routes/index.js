@@ -8,6 +8,7 @@ const express = require('express');
 const orderCtrl = require('../controller/orders') 
 const UserCtrl = require('../controller/users') 
 const ProductCtrl = require('../controller/products')
+const authCtrl = require('../controller/authController')
 // ******************
 const app = express();
 
@@ -33,6 +34,8 @@ const root = (app, next) => {
   app.post('/product',ProductCtrl.saveProduct)
   app.delete('/product/:productId',ProductCtrl.deleteProduct)
   app.put('/product/:productId',ProductCtrl.updateProduct)
+
+  app.post('/signup',authCtrl.signUp )
 
   app.all('*', (req, resp, nextAll) => nextAll(404));
   return next();
