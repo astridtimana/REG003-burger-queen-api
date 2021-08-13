@@ -8,6 +8,7 @@ const config = require('../config');
 const port = process.env.PORT || 8888;
 const baseUrl = process.env.REMOTE_URL || `http://127.0.0.1:${port}`;
 
+
 const __e2e = {
   port,
   baseUrl,
@@ -109,6 +110,7 @@ module.exports = () => new Promise((resolve, reject) => {
     return resolve();
   }
 
+<<<<<<< HEAD
   // TODO: Configurar DB de tests
   mongoSetup().then(() => {
   console.info('Staring local server...');
@@ -118,32 +120,47 @@ module.exports = () => new Promise((resolve, reject) => {
   });
 
   Object.assign(__e2e, { childProcessPid: child.pid });
+=======
+  // TODO: Configurar DB de tests JEST MONGO O MONGO-MEMORY-SERVER
+>>>>>>> d9223a161f926e4821bc465e31cba9acd35b41bb
 
-  child.stdout.on('data', (chunk) => {
-    console.info(`\x1b[34m${chunk.toString()}\x1b[0m`);
-  });
-
-  child.stderr.on('data', (chunk) => {
-    const str = chunk.toString();
-    if (/DeprecationWarning/.test(str)) {
-      return;
-    }
-    console.error('child::stderr', str);
-  });
-
-  process.on('uncaughtException', (err) => {
-    console.error('UncaughtException!');
-    console.error(err);
-    kill(child.pid, 'SIGKILL', () => process.exit(1));
-  });
-
-  waitForServerToBeReady()
-    .then(checkAdminCredentials)
-    .then(createTestUser)
-    .then(resolve)
-    .catch((err) => {
-      kill(child.pid, 'SIGKILL', () => reject(err));
+  mongoSetUp().then(()=>{
+    console.info('Staring local server...');
+    const child = spawn('npm', ['start', process.env.PORT || 8888], {
+      cwd: path.resolve(__dirname, '../'),
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
+  
+    Object.assign(__e2e, { childProcessPid: child.pid });
+  
+    child.stdout.on('data', (chunk) => {
+      console.info(`\x1b[34m${chunk.toString()}\x1b[0m`);
+    });
+<<<<<<< HEAD
+=======
+  
+    child.stderr.on('data', (chunk) => {
+      const str = chunk.toString();
+      if (/DeprecationWarning/.test(str)) {
+        return;
+      }
+      console.error('child::stderr', str);
+    });
+  
+    process.on('uncaughtException', (err) => {
+      console.error('UncaughtException!');
+      console.error(err);
+      kill(child.pid, 'SIGKILL', () => process.exit(1));
+    });
+  
+    waitForServerToBeReady()
+      .then(checkAdminCredentials)
+      .then(createTestUser)
+      .then(resolve)
+      .catch((err) => {
+        kill(child.pid, 'SIGKILL', () => reject(err));
+      });
+>>>>>>> d9223a161f926e4821bc465e31cba9acd35b41bb
   });
 });
 

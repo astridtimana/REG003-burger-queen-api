@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const User = require('../models/Users')
 
 const {
   requireAuth,
@@ -7,7 +8,7 @@ const {
 
 const {
   getUsers,
-} = require('../controller/users');
+} = require('../controller/users.js');
 
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
@@ -15,13 +16,20 @@ const initAdminUser = (app, next) => {
     return next();
   }
 
-  const adminUser = {
+  const adminUser = new User({
     email: adminEmail,
     password: bcrypt.hashSync(adminPassword, 10),
     roles: { admin: true },
-  };
-
-  // TODO: crear usuaria admin
+  });
+  // TODO: crear usuaria admin 1st
+  adminUser.save()
+    .then((doc)=> { 
+      console.log('hello')
+      console.log(doc)
+    //  next()
+    })
+    .catch((err) => console.log(err))
+  
   next();
 };
 

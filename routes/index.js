@@ -6,11 +6,13 @@ const orders = require('./orders');
 const Users = require('../models/Users')
 const express = require('express');
 const orderCtrl = require('../controller/orders') 
-const UserCtrl = require('../controller/users') 
+const UserCtrl = require('../controller/users.js') 
 const ProductCtrl = require('../controller/products')
 const authCtrl = require('../controller/authController')
 // ******************
 const app = express();
+const authentication = require('../middleware/auth')
+
 
 const root = (app, next) => {
   const pkg = app.get('pkg');
@@ -34,6 +36,13 @@ const root = (app, next) => {
   app.post('/product',ProductCtrl.saveProduct)
   app.delete('/product/:productId',ProductCtrl.deleteProduct)
   app.put('/product/:productId',ProductCtrl.updateProduct)
+  
+  //PRUEBAS
+  app.get('/private', authentication ,function(req,res){
+    res.status(200).send({message:'Tienes acceso'})
+  })
+  app.post('/signup', AuthCtrl.signUp )
+  app.post('/signin', AuthCtrl.signIn )
 
   app.post('/signup',authCtrl.signUp )
 
