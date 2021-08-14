@@ -27,4 +27,9 @@ userSchema.methods.encryptPassword = async (password) => {
   return bcrypt.hash(password, salt);
 };
 
+userSchema.methods.comparePassword = function ( password) {
+  return bcrypt.compare(password, this.password)
+}
+
+
 module.exports = model('Users', userSchema);

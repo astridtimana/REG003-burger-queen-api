@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-
+const User = require('../models/Users')
 const { secret } = config;
 
 /** @module auth */
@@ -17,16 +17,32 @@ module.exports = (app, nextMain) => {
    * @code {400} si no se proveen `email` o `password` o ninguno de los dos
    * @auth No requiere autenticación
    */
-  app.post('/auth', (req, resp, next) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return next(400);
+   app.post('/auth', async (req, res, next) => {
+    // const { email, password } = req.body;
+    // if (!email || !password) {
+    //   return next(400);
+    // }
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).send("The email doesn't exists");
     }
+    //console.log(user)
+    const validPassword = await user.comparePassword(
+      req.body.password,
+      user.password
+    );
+    if (!validPassword) {
+      return res.status(401).send({ auth: false, token: null });
+    }
+    const token = jwt.sign({ id: user._id }, config.secret, {
+      expiresIn: 60 * 60 *6,
+    });
+    res.status(200).json({ auth: true, token });
 
-    // TODO: autenticar a la usuarix
+    // TODO: autenticar a la usuarix 2° - Ready
     next();
   });
+
 
   return nextMain();
 };
