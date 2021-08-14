@@ -19,25 +19,7 @@ const signUp = async (req,res,next) =>{
     res.json({ auth: true , token: token});
 }
 
-const signIn = async (req, res) => {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      return res.status(404).send("The email doesn't exists");
-    }
-    const validPassword = await user.comparePassword(
-      req.body.password,
-      user.password
-    );
-    if (!validPassword) {
-      return res.status(401).send({ auth: false, token: null });
-    }
-    const token = jwt.sign({ id: user._id }, config.secret, {
-      expiresIn: 60 * 60 *6,
-    });
-    res.status(200).json({ auth: true, token });
-  };
 
 module.exports={
-    signUp,
-    signIn
+    signUp
 }
