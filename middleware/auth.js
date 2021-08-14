@@ -1,31 +1,37 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (secret) => (req, resp, next) => {
+module.exports = (secret) => (req, res, next) => {
   const { authorization } = req.headers;
+  //console.log(req)
 
   if (!authorization) {
-    return next();
+    return res.status(403).send({message:'No tienes autorización'})
+    //return next();
   }
 
   const [type, token] = authorization.split(' ');
 
   if (type.toLowerCase() !== 'bearer') {
-    return next();
+    return res.status(400).send({message:'Type no es "bearer" '})
+    //return next();
   }
 
   jwt.verify(token, secret, (err, decodedToken) => {
     if (err) {
       return next(403);
     }
-
-    // TODO: Verificar identidad del usuario usando `decodeToken.uid`
+    req.uid = decodedToken.id
+    console.log(decodedToken)
+    next()
+    // TODO: Verificar identidad del usuario usando `decodeToken.uid` 2nd
   });
 };
 
 
 module.exports.isAuthenticated = (req) => (
+
   // TODO: decidir por la informacion del request si la usuaria esta autenticada
-  false
+  req.uid||false
 );
 
 

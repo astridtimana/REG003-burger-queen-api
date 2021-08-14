@@ -1,8 +1,8 @@
 const User = require('../models/Users')
 
 const getUser = (req, res) => {
-  let userId = req.params.userId
-
+  let userId = req.params.uid
+  
   User.findById(userId, (err, user)=>{
     if (err) return res.status(500).send({message:`Error en la petición userID`})
     if (!user) return res.status(404).send({message:`No usuario no existe`})
@@ -40,7 +40,7 @@ const saveUser= (req, res) => {
 }
 
 const updatUser = (req, res) => {
-  let userId = req.params.userId
+  let userId = req.params.uid
   let update = rep.body
 
   User.findByIdAndUpdate(userId, update, (err, userUpdated) => {
@@ -53,7 +53,7 @@ const updatUser = (req, res) => {
 
 
 const deleteuser = (req, res) => {
-  let userId = req.params.userId 
+  let userId = req.params.uid 
 
   User.findById(userId, (err, user) => {
     if (err) res.status(500).send({message:`Error al borrar al usuario`}) // COMO MANEJAR LOS STATUS 401,403,404
