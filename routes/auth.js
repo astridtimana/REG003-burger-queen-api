@@ -26,7 +26,7 @@ module.exports = (app, nextMain) => {
     if (!user) {
       return res.status(404).send("The email doesn't exists");
     }
-    //console.log(user)
+   
     const validPassword = await user.comparePassword(
       req.body.password,
       user.password
@@ -34,7 +34,7 @@ module.exports = (app, nextMain) => {
     if (!validPassword) {
       return res.status(401).send({ auth: false, token: null });
     }
-    const token = jwt.sign({ id: user._id }, config.secret, {
+    const token = jwt.sign({ id: user._id, roles:user.roles}, config.secret, {
       expiresIn: 60 * 60 *6,
     });
     res.status(200).json({ auth: true, token });

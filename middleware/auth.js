@@ -2,11 +2,11 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (secret) => (req, res, next) => {
   const { authorization } = req.headers;
-  //console.log(req)
+  // console.log(req)
 
   if (!authorization) {
-    return res.status(403).send({message:'No tienes autorización'})
-    //return next();
+    //return res.status(403).send({message:'No tienes autorización'})
+    return next();
   }
 
   const [type, token] = authorization.split(' ');
@@ -20,8 +20,8 @@ module.exports = (secret) => (req, res, next) => {
     if (err) {
       return next(403);
     }
-    req.uid = decodedToken.id
-    console.log(decodedToken)
+    req.decoded = decodedToken
+    //console.log(req)
     next()
     // TODO: Verificar identidad del usuario usando `decodeToken.uid` 2nd
   });
@@ -29,15 +29,16 @@ module.exports = (secret) => (req, res, next) => {
 
 
 module.exports.isAuthenticated = (req) => (
-
+  //console.log(req.decoded)
   // TODO: decidir por la informacion del request si la usuaria esta autenticada
-  req.uid||false
+  req.decoded||false
+  
 );
 
 
 module.exports.isAdmin = (req) => (
   // TODO: decidir por la informacion del request si la usuaria es admin
-  false
+  req.decoded.roles.admin||false
 );
 
 
