@@ -16,11 +16,22 @@ const getUser = (req, res) => {
 }
 
 const getUsers = (req, res) => {
+  console.log(req)
+  const { authorization } = req.headers;
+  if (!authorization) {
+    return res.status(401).send({message:'No hay cabecera de autenticación'})
+    //return next();
+  }
+  if (!req.decoded.roles.admin) {
+    return res.status(403).send({message:'No es usuario admin'})
+  }
+
   User.find({}, (err, users) => {
     if (err) return res.status(500).send({message: `Error en la petición colecctionUsers`})
     if (!users) return res.status(404).send({message:`No existen usuarios`})
 
-    res.send(200, { users })
+    return res.send(200, { users })
+    //    res.status(200).send({ users })
   })
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
 
