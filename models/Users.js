@@ -7,17 +7,16 @@ const userSchema = new Schema({
   email: {
     type: String,
     unique: true,
-    required: true,
+    required: true
   },
   password: {
     type: String,
     required: true,
-    //regexp
-    //trim(?)
+    minLength : 6
   },
   roles: {
     admin: {
-      type: Boolean,
+      type: Boolean
     },
   },
 });
