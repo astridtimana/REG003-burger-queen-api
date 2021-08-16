@@ -24,9 +24,6 @@ const getUsers = (req, res) => {
 
 
 const saveUser= (req, res) => {
-  console.log('POST/api/user')
-  console.log(req.body)
-
   let user = new User()
   user.email = req.body.email
   user.password = req.body.password

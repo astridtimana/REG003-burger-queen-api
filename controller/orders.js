@@ -19,9 +19,6 @@ const getOrders = (req, res) => {
   })
 }
 const saveOrder= (req, res) => {
-  console.log('POST/api/order')
-  console.log(req.body)
-
   let order = new Order()
   order.userId = req.body.userId
   order.client = req.body.client

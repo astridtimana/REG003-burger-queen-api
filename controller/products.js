@@ -22,9 +22,6 @@ const getProducts = (req, res) => {
 
 
 const saveProduct= (req, res) => {
-  console.log('POST/api/product')
-  console.log(req.body)
-
   let product = new Product()
   product.name = req.body.name
   product.price = req.body.price

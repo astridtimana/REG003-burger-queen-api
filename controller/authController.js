@@ -9,7 +9,6 @@ const signUp = async (req,res,next) =>{
         password : password,
         roles: roles
     })
-    // console.log(user)
 
     // encrypt the user's password
     user.password = await user.encryptPassword(password);
