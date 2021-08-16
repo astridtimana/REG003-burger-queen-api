@@ -1,4 +1,6 @@
 const User = require('../models/Users')
+const jwt = require('jsonwebtoken')
+const config = require('../config')
 
 const getUser = (req, res) => {
   let userId = req.params.uid
@@ -23,17 +25,26 @@ const getUsers = (req, res) => {
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
 
 
-const saveUser= (req, res) => {
-  let user = new User()
-  user.email = req.body.email
-  user.password = req.body.password
-  user.roles.admin = req.body.roles.admin
+const saveUser= async(req, res) => {
+  const {email, password, roles} = req.body;
+  const user = new User({
+      email : email,
+      password : password,
+      roles: roles
+  })
+    // encrypt the user's password
+    user.password = await user.encryptPassword(password);
 
-  user.save((err, userStored) => {
+    await user.save((err) => {
     if (err) res.status(500).send({message:`Error al salvar en la base de datos`})
 
-    res.status(200).send({user: userStored })
+    const token = jwt.sign({id:user._id, roles:user.roles}, config.secret, {expiresIn : 60*60 * 6})
+    res.json({ auth: true , token: token});
+
+    //res.status(200).send({user: userStored  })
   })
+
+
 }
 
 const updatUser = (req, res) => {
