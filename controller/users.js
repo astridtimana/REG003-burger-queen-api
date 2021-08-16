@@ -37,6 +37,7 @@ const saveUser= async(req, res) => {
 
     await user.save((err) => {
     if (err) res.status(500).send({message:`Error al salvar en la base de datos`})
+    //si no hay email o password (status: 400)
 
     const token = jwt.sign({id:user._id, roles:user.roles}, config.secret, {expiresIn : 60*60 * 6})
     res.json({ auth: true , token: token});
