@@ -21,6 +21,11 @@ const app = express();
 
 app.set('config', config);
 app.set('pkg', pkg);
+//******** Ejemplo Uso de Middleware */
+// app.use((req, res, next)=> {
+//   console.log('Línea 25')
+//   next()
+// })
 
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
