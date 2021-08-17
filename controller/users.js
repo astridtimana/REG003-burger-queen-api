@@ -5,34 +5,45 @@ const config = require('../config')
 const getUser = (req, res) => {
   let userId = req.params.uid
   
+  // const { authorization } = req.headers;
+  // if (!authorization) {
+  //   return res.status(401).send({message:'No hay cabecera de autenticación'})
+  //   //return next();
+  // }
+  if (!req.decoded.roles.admin) {
+    return res.status(403).send({message:'No es usuario admin'})
+  }
+
   User.findById(userId, (err, user)=>{
-    if (err) return res.status(500).send({message:`Error en la petición userID`})
-    if (!user) return res.status(404).send({message:`No usuario no existe`})
+    console.log(user)
+    if (err) return res.status(404).send({message:`Error en la petición userID`})
 
     res.status(200).send({ user })
   })
+  
   // BUSCAR PAGINATION
   // MANEJO DE STATUS
 }
 
 const getUsers = (req, res) => {
-  console.log(req)
-  const { authorization } = req.headers;
-  if (!authorization) {
-    return res.status(401).send({message:'No hay cabecera de autenticación'})
-    //return next();
-  }
-  if (!req.decoded.roles.admin) {
-    return res.status(403).send({message:'No es usuario admin'})
-  }
+  //console.log(req)
+  // const { authorization } = req.headers;
+  // if (!authorization) {
+  //   return res.status(401).send({message:'No hay cabecera de autenticación'})
+  //   //return next();
+  // }
+  // if (!req.decoded.roles.admin) {
+  //   return res.status(403).send({message:'No es usuario admin'})
+  // }
 
   User.find({}, (err, users) => {
     if (err) return res.status(500).send({message: `Error en la petición colecctionUsers`})
     if (!users) return res.status(404).send({message:`No existen usuarios`})
 
-    return res.send(200, { users })
-    //    res.status(200).send({ users })
+    // return res.send(200, { users })
+    return res.status(200).send({ users })
   })
+
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
 
 
@@ -43,11 +54,16 @@ const saveUser= async(req, res) => {
       password : password,
       roles: roles
   })
+
+  if(!email || !password){ return res.status(400).send({message:'No hay password ni contraseña'})}
     // encrypt the user's password
     user.password = await user.encryptPassword(password);
+  
+    // const userValidated = User.findOne({email:req.body.email});
+    // if(userValidated){return res.status(400).send('correo ya existe')}
 
     await user.save((err) => {
-    if (err) res.status(500).send({message:`Error al salvar en la base de datos`})
+    if (err) res.status(400).send({message:`Error al salvar en la base de datos`})
     //si no hay email o password (status: 400)
 
     const token = jwt.sign({id:user._id, roles:user.roles}, config.secret, {expiresIn : 60*60 * 6})
