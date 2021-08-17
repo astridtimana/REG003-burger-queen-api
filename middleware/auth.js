@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/Users')
 
 module.exports = (secret) => (req, res, next) => {
   const { authorization } = req.headers;
@@ -19,10 +20,20 @@ module.exports = (secret) => (req, res, next) => {
     if (err) {
       return next(403);
     }
-    req.decoded = decodedToken
-    next()
+
+    const userValidated = User.findById(decodedToken.id)
+    userValidated.then((user)=>{
+      if (!user) {
+        res.status(404).send({message:`No existe usuario`})
+      }
+      req.decoded = decodedToken
+      next()
+    })
+    //next()
     // TODO: Verificar identidad del usuario usando `decodeToken.uid` 2nd
   });
+
+
 };
 
 
