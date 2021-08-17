@@ -4,8 +4,8 @@ const config = require('../config')
 
 const getUser = async(req, res) => {
   let userId = req.params.uid
-  console.log(req.params)
-  console.log(userId)
+  //console.log(req.params)
+  //console.log(userId)
 
   // const { authorization } = req.headers;
   // if (!authorization) {
@@ -67,12 +67,14 @@ const saveUser= async(req, res) => {
 
   if(!email || !password){ return res.status(400).send({message:'No hay password ni contraseña'})}
     // encrypt the user's password
-    user.password = await user.encryptPassword(password);
-  
+    // si el password es menor que (antes de guardar)//
+    if(password.length<6){
+      return res.status(400).send('Contraseña inválida')
+    }
+  user.password = await user.encryptPassword(password);
+
     // const userValidated = User.findOne({email:req.body.email});
     // if(userValidated){return res.status(400).send('correo ya existe')}
-
-
 
     const userValidated = User.findOne({email:email});
     userValidated.then((doc) => {
