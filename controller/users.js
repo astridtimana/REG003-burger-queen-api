@@ -41,7 +41,7 @@ const getUsers = (req, res) => {
     if (!users) return res.status(404).send({message:`No existen usuarios`})
 
     // return res.send(200, { users })
-    return res.status(200).send({ users })
+    return res.end(JSON.stringify(users))
   })
 
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
