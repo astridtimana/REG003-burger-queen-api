@@ -4,14 +4,7 @@ const config = require('../config')
 
 const getUser = async(req, res) => {
   let userId = req.params.uid
-  //console.log(req.params)
-  //console.log(userId)
 
-  // const { authorization } = req.headers;
-  // if (!authorization) {
-  //   return res.status(401).send({message:'No hay cabecera de autenticación'})
-  //   //return next();
-  // }
   if (!req.decoded.roles.admin) {
     return res.status(403).send({message:'No es usuario admin'})
   }
@@ -21,31 +14,16 @@ const getUser = async(req, res) => {
   }
 
    User.findById(userId, (err, user)=>{
-   // console.log(user)
     if (err) return res.status(404).send({message:`Error en la petición userID`})
 
     //res.status(200).send({ user })
-    return res.status(200).end(JSON.stringify( user.email))
-
+    //return res.status(200).end(JSON.stringify( user.email))
   })
-
-
-  
   // BUSCAR PAGINATION
   // MANEJO DE STATUS
 }
 
 const getUsers = (req, res) => {
-  //console.log(req)
-  // const { authorization } = req.headers;
-  // if (!authorization) {
-  //   return res.status(401).send({message:'No hay cabecera de autenticación'})
-  //   //return next();
-  // }
-  // if (!req.decoded.roles.admin) {
-  //   return res.status(403).send({message:'No es usuario admin'})
-  // }
-
   User.find({}, (err, users) => {
     if (err) return res.status(500).send({message: `Error en la petición colecctionUsers`})
     if (!users) return res.status(404).send({message:`No existen usuarios`})
@@ -57,7 +35,7 @@ const getUsers = (req, res) => {
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
 
 
-const saveUser= async(req, res) => {
+const saveUser= async(req, res, next) => {
   const {email, password, roles} = req.body;
   const user = new User({
       email : email,
@@ -76,10 +54,10 @@ const saveUser= async(req, res) => {
     // const userValidated = User.findOne({email:req.body.email});
     // if(userValidated){return res.status(400).send('correo ya existe')}
 
-    const userValidated = User.findOne({email:email});
+    const userValidated =  User.findOne({email:email});
     userValidated.then((doc) => {
       if (doc) {
-        res.status(403).send({message:`Email existe`})
+        return next(403);
       }
   
       user.save();
@@ -87,27 +65,18 @@ const saveUser= async(req, res) => {
       res.json({ auth: true , token: token});
       })
       .catch((err) => {
-        if (err !== 200) {
-          console.info('Ha ocurrido un error', err);
-        }
+          console.info('Ha ocurrido un error, user-controller', err);
       });
   
-    next();
+    //next();
     
   //   await user.save((err) => {
   //   if (err) res.status(400).send({message:`Error al salvar en la base de datos`})
   //   //si no hay email o password (status: 400)
-
   //   const token = jwt.sign({id:user._id, roles:user.roles}, config.secret, {expiresIn : 60*60 * 6})
   //   res.json({ auth: true , token: token});
-
   //   //res.status(200).send({user: userStored  })
-
-
-    
   // })
-
-
 }
 
 const updatUser = (req, res) => {
@@ -123,16 +92,28 @@ const updatUser = (req, res) => {
 
 
 
-const deleteuser = (req, res) => {
+const deleteuser = async(req, res) => {
   let userId = req.params.uid 
 
-  User.findById(userId, (err, user) => {
-    if (err) res.status(500).send({message:`Error al borrar al usuario`}) // COMO MANEJAR LOS STATUS 401,403,404
+  if (!req.decoded.roles.admin) {
+    return res.status(403).send({message:'No es usuario admin'})
+  }
+  const emailValided = await User.findOne({ email: userId });
+  console.log(req.decoded)
+  if (emailValided) {
+    return res.status(200).end(JSON.stringify( emailValided.email))
+  }
 
+   User.findById(userId, (err, user)=>{
+   // console.log(user)
+    if (err) return res.status(404).send({message:`Error en la petición userID`})
+
+    //res.status(200).send({ user })
     user.remove(err => {
       if (err) res.status(500).send({message:`Error al borrar el usuario`})
-      res.status(200).send({message:`El usuario ha sido eliminado`})
+      //res.status(200).send({message:`El usuario ha sido eliminado`})
     })
+
   })
 }
 
