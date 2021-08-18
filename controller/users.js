@@ -10,7 +10,7 @@ const getUser = async(req, res) => {
   }
   const emailValided = await User.findOne({ email: userId });
   if (emailValided) {
-    return res.status(200).end(JSON.stringify( emailValided.email))
+    return res.status(200).send(JSON.stringify( emailValided.email))
   }
 
    User.findById(userId, (err, user)=>{
@@ -29,7 +29,7 @@ const getUsers = (req, res) => {
     if (!users) return res.status(404).send({message:`No existen usuarios`})
 
     // return res.send(200, { users })
-    return res.end(JSON.stringify(users))
+    return res.send(JSON.stringify(users))
   })
 
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
@@ -79,41 +79,52 @@ const saveUser= async(req, res, next) => {
   // })
 }
 
-const updatUser = (req, res) => {
+const updateuser = async (req, res, next) => {
+
+  try {
   let userId = req.params.uid
-  let update = rep.body
+  let update = req.body
 
-  User.findByIdAndUpdate(userId, update, (err, userUpdated) => {
-    if (err) res.status(500).send({message:`Error al actualizar el usuario`})
+  if(!req.decoded.roles.admin){res.status(403).send({message:`Not admin`})}
 
-    res.status(200).send({ user: userUpdated })
-  })
+   const prueba = await User.findByIdAndUpdate(userId, update);
+  //  const userUpdate = await User.findOneAndUpdate(
+  //   value,
+  //   { $set: body },
+  //   { new: true, useFindAndModify: false },
+  // );
+
+   res.status(200).send(prueba)
+  } catch (error) {
+    next(404)
+  }
+
 } //MANEJO DE STATUS
 
 
 
-const deleteuser = async(req, res) => {
+const deleteuser = async(req, res,next) => {
   let userId = req.params.uid 
 
   if (!req.decoded.roles.admin) {
-    return res.status(403).send({message:'No es usuario admin'})
+    return next(403);
   }
   const emailValided = await User.findOne({ email: userId });
-  console.log(req.decoded)
+  //console.log(req.decoded)
   if (emailValided) {
-    return res.status(200).end(JSON.stringify( emailValided.email))
+    return res.status(200).send(JSON.stringify( emailValided.email))
   }
 
    User.findById(userId, (err, user)=>{
    // console.log(user)
-    if (err) return res.status(404).send({message:`Error en la petición userID`})
+    if (err) return next(404);
 
     //res.status(200).send({ user })
     user.remove(err => {
       if (err) res.status(500).send({message:`Error al borrar el usuario`})
       //res.status(200).send({message:`El usuario ha sido eliminado`})
     })
-
+    return res.status(200).send('usuario eliminado')
   })
 }
 
@@ -122,7 +133,7 @@ const deleteuser = async(req, res) => {
   getUsers,
   saveUser,
   deleteuser,
-  updatUser
+  updateuser
 }
 // module.exports = {
 //   getUsers: (req, resp, next) => {

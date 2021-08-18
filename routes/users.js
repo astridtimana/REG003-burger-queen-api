@@ -6,7 +6,7 @@ const {
 } = require('../middleware/auth');
 
 const {
-  getUsers, getUser, deleteuser, updatUser, saveUser,
+  getUsers, getUser, deleteuser, updateuser, saveUser,
 } = require('../controller/users');
 
 const initAdminUser = (app, next) => {
@@ -152,7 +152,7 @@ module.exports = (app, next) => {
    * @code {403} una usuaria no admin intenta de modificar sus `roles`
    * @code {404} si la usuaria solicitada no existe
    */
-  app.put('/users/:uid', requireAuth, updatUser);
+  app.put('/users/:uid', requireAuth, updateuser);
 
   /**
    * @name DELETE /users
