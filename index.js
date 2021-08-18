@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const express = require('express');
 const config = require('./config');
 const authMiddleware = require('./middleware/auth');
@@ -6,12 +7,25 @@ const routes = require('./routes');
 const pkg = require('./package.json');
 
 const { port, dbUrl, secret } = config;
+mongoose
+  .connect(dbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  // eslint-disable-next-line no-console
+  .then(console.log('yei'))
+  .catch(console.error);
+
 const app = express();
 
-// TODO: Conexión a la Base de Datos (MongoDB o MySQL)
 
 app.set('config', config);
 app.set('pkg', pkg);
+//******** Ejemplo Uso de Middleware */
+// app.use((req, res, next)=> {
+//   console.log('Línea 25')
+//   next()
+// })
 
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
