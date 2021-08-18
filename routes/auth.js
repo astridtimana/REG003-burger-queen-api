@@ -40,7 +40,7 @@ module.exports = (app, nextMain) => {
     res.status(200).json({ auth: true, token });
 
     // TODO: autenticar a la usuarix 2° - Ready
-    next();
+   //next();
   });
 
 
