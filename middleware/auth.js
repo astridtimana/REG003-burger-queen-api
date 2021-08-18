@@ -28,7 +28,11 @@ module.exports = (secret) => (req, res, next) => {
       }
       req.decoded = decodedToken
       next()
-    })
+    })      
+    .catch((err) => {
+      console.info('Ha ocurrido un error, auth-middleware', err);
+    });
+
     //next()
     // TODO: Verificar identidad del usuario usando `decodeToken.uid` 2nd
   });

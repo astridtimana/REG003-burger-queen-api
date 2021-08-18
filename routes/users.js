@@ -34,9 +34,7 @@ const initAdminUser = (app, next) => {
     console.info('El usuario ha sido creado');
   })
     .catch((err) => {
-      if (err !== 200) {
-        console.info('Ha ocurrido un error', err);
-      }
+        console.info('Ha ocurrido un error-user,routh', err);
     });
 
   next();
