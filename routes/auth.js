@@ -34,7 +34,7 @@ module.exports = (app, nextMain) => {
     if (!validPassword) {
       return res.status(401).send({ auth: false, token: null });
     }
-    const token = jwt.sign({ id: user._id, roles:user.roles}, config.secret, {
+    const token = jwt.sign({ id: user._id, roles:user.roles, email:user.email}, config.secret, {
       expiresIn: 60 * 60 *6,
     });
     res.status(200).json({ auth: true, token });
