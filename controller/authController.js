@@ -14,7 +14,7 @@ const signUp = async (req,res,next) =>{
     user.password = await user.encryptPassword(password);
     await user.save();
 
-    const token = jwt.sign({id:user._id, roles:user.roles}, config.secret, {expiresIn : 60*60 * 6})
+    const token = jwt.sign({id:user._id, roles:user.roles, email: user.email}, config.secret, {expiresIn : 60*60 * 6})
     res.json({ auth: true , token: token});
 }
 
