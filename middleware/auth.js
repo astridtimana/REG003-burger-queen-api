@@ -30,7 +30,7 @@ module.exports = (secret) => (req, res, next) => {
       next()
     })      
     .catch((err) => {
-      console.info('Ha ocurrido un error, auth-middleware', err);
+      res.status(500).send('Internal error')
     });
 
     //next()
