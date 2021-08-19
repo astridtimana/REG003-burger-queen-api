@@ -47,8 +47,11 @@ const saveUser= async(req, res, next) => {
         roles: roles
     })
     //console.log(user)
+    let regEx = /\S+@\S+/
+    !regEx.test(req.body.email) && next(400)
+    
     if(!email || !password){ return res.status(400).send({message:'No hay password ni contraseña'})}
-    if(password.length<5){ return res.status(400).send('Contraseña inválida') }
+    if(password.length<4){ return res.status(400).send('Contraseña inválida') }
     user.password = await user.encryptPassword(password);
 
     const userValidated =  User.findOne({email:email});
@@ -68,46 +71,57 @@ const updateuser = async (req, res, next) => {
   try {
     let userId = req.params.uid
     let update = req.body
+    let response = null;
 
-    if(!req.decoded.id === userId || !req.decoded.roles.admin){return next(403)}
     
-   const prueba = await User.findByIdAndUpdate(userId, {$set: update}, { new: true, useFindAndModify: false});
-    //new: retorna objeto modificado 
-    //usefindandmodify: deberia reemplazar a findbyidandupdate,mas tb se puede usar como config global
+    console.log(Object.keys(update) , update)
+       // identificamos si el params es objectId o email
+    if(objectId.isValid(userId)){
+      if(!req.decoded.roles.admin && req.decoded.id !== userId ){
+        next(403) 
+      }
+      if(Object.keys(update).length == 0){return next(400)}
+      response = await User.findById(userId)
+    } else {
+      if( req.decoded.email !== userId ){next(404) }
+      if(Object.keys(update).length == 0){return next(400)}
+      if(!req.decoded.roles.admin ){return next(403)}
+      response = await User.findOne(userId);
+    } 
+    // console.log(update)
+    
+    response2 = await response.findOneAndUpdate(userId, {$set: update}, { new: true, useFindAndModify: false});
+        //new:true : retorna objeto modificado 
+        //usefindandmodify: deberia reemplazar a findbyidandupdate,mas tb se puede usar como config global
+    if (!response) { return next(403) }
+    
+    return res.status(200).send(response2)
 
-
-   res.status(200).send(prueba)
   } catch (error) {
     next(404)
   }
 
 } //MANEJO DE STATUS
 
-
-
 const deleteuser = async(req, res,next) => {
-  let userId = req.params.uid 
+  try {
+    let userId = req.params.uid;
+    let response = null;
 
-  if (!req.decoded.roles.admin) {
-    return next(403);
-  }
-  const emailValided = await User.findOne({ email: userId });
-  //console.log(req.decoded)
-  if (emailValided) {
-    return res.status(200).send(JSON.stringify( emailValided.email))
-  }
-
-   User.findById(userId, (err, user)=>{
-   // console.log(user)
-    if (err) return next(404);
-
-    //res.status(200).send({ user })
-    user.remove(err => {
-      if (err) res.status(500).send({message:`Error al borrar el usuario`})
-      //res.status(200).send({message:`El usuario ha sido eliminado`})
-    })
-    return res.status(200).send('usuario eliminado')
-  })
+    // identificamos si el params es objectId o email
+    if(objectId.isValid(userId)){
+      !req.decoded.roles.admin && req.decoded.id !== userId 
+      ? next(403) 
+      : response = await User.findById(userId)
+    } else{
+        !req.decoded.roles.admin && req.decoded.email !== userId 
+        ? next(403) 
+        : response = await User.findOne({ email: userId })
+    }
+      response.remove()
+      if (!response) { return next(404) }
+    return res.status(200).send(response)
+   } catch (error) { return res.status(404).send('No existe usuario') }
 }
 
  module.exports = {
