@@ -8,13 +8,14 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     required: true,
-    match: [/\S+@\S+/]
-    //match: [/\S+@\S+\.\S+/]
+    //match: [/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}/]
+    //match: [/^\S+@\S+\.\S+$/]
+
   },
   password: {
     type: String,
     required: true,
-    minLength : 6
+    minLength : 5
   },
   roles: {
     admin: {
