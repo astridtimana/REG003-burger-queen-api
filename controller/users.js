@@ -67,29 +67,34 @@ const saveUser= async(req, res, next) => {
 }
 
 const updateuser = async (req, res, next) => {
-  //console.log(req)
   try {
     let userId = req.params.uid
     let update = req.body
     let response = null;
 
-    
-    console.log(Object.keys(update) , update)
-       // identificamos si el params es objectId o email
     if(objectId.isValid(userId)){
       if(!req.decoded.roles.admin && req.decoded.id !== userId ){
         next(403) 
       }
       if(Object.keys(update).length == 0){return next(400)}
-      response = await User.findById(userId)
+ 
     } else {
-      if( req.decoded.email !== userId ){next(404) }
+      console.log('83')
+      if(req.decoded.roles.admin){  
+        console.log('85')
+        console.log(req)
+        const validEmail = await User.findOne({email: userId })
+        console.log(validEmail)
+        if(!validEmail){return next(404)}
+      }else{
+        if( req.decoded.email !== userId ){next(403) }
+        if( req.decoded.email === userId && req.body.roles ){return next(403)}
+      }
+
       if(Object.keys(update).length == 0){return next(400)}
-      if(!req.decoded.roles.admin ){return next(403)}
-      response = await User.findOne(userId);
+
     } 
-    // console.log(update)
-    
+    response = await User.findById(userId)
     response2 = await response.findOneAndUpdate(userId, {$set: update}, { new: true, useFindAndModify: false});
         //new:true : retorna objeto modificado 
         //usefindandmodify: deberia reemplazar a findbyidandupdate,mas tb se puede usar como config global
@@ -98,6 +103,7 @@ const updateuser = async (req, res, next) => {
     return res.status(200).send(response2)
 
   } catch (error) {
+    console.log('error en catch 106')
     next(404)
   }
 
