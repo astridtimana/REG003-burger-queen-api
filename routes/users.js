@@ -17,7 +17,7 @@ const initAdminUser = (app, next) => {
 
   const adminUser = {
     email: adminEmail,
-    password: bcrypt.hashSync(adminPassword, 10),
+    password: adminPassword,
     roles: { admin: true },
   };
 
@@ -34,7 +34,9 @@ const initAdminUser = (app, next) => {
     console.info('El usuario ha sido creado');
   })
     .catch((err) => {
-        console.info('Ha ocurrido un error-user,routh', err);
+      if (err !== 200) {
+        console.info('Ha ocurrido un error', err);
+      }
     });
 
   next();

@@ -1,8 +1,8 @@
-const User = require('../models/Users')
-const jwt = require('jsonwebtoken')
-const config = require('../config')
-const objectId = require('mongoose').Types.ObjectId // es un schemaType de objectId de mongoose
-
+const User = require('../models/Users');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
+const objectId = require('mongoose').Types.ObjectId ; // es un schemaType de objectId de mongoose
+const bcrypt = require('bcrypt');
 const getUser = async(req, res, next) => {
   try {
     let userId = req.params.uid;
@@ -52,7 +52,7 @@ const saveUser= async(req, res, next) => {
     
     if(!email || !password){ return res.status(400).send({message:'No hay password ni contraseña'})}
     if(password.length<4){ return res.status(400).send('Contraseña inválida') }
-    user.password = await user.encryptPassword(password);
+    // user.password = await user.encryptPassword(password); 
 
     const userValidated =  User.findOne({email:email});
     userValidated.then((doc) => { if (doc) {
@@ -67,43 +67,36 @@ const saveUser= async(req, res, next) => {
 }
 
 const updateuser = async (req, res, next) => {
+
   try {
-    let userId = req.params.uid
-    let update = req.body
+    const userId = req.params.uid
+    const update = req.body
+
     let response = null;
 
+
     if(objectId.isValid(userId)){
-      if(!req.decoded.roles.admin && req.decoded.id !== userId ){
-        next(403) 
-      }
-      if(Object.keys(update).length == 0){return next(400)}
- 
-    } else {
-      console.log('83')
-      if(req.decoded.roles.admin){  
-        console.log('85')
-        console.log(req)
-        const validEmail = await User.findOne({email: userId })
-        console.log(validEmail)
-        if(!validEmail){return next(404)}
-      }else{
-        if( req.decoded.email !== userId ){next(403) }
-        if( req.decoded.email === userId && req.body.roles ){return next(403)}
-      }
-
-      if(Object.keys(update).length == 0){return next(400)}
-
-    } 
-    response = await User.findById(userId)
-    response2 = await response.findOneAndUpdate(userId, {$set: update}, { new: true, useFindAndModify: false});
-        //new:true : retorna objeto modificado 
-        //usefindandmodify: deberia reemplazar a findbyidandupdate,mas tb se puede usar como config global
-    if (!response) { return next(403) }
+      !req.decoded.roles.admin && req.decoded.id !== userId && next(403) 
+      Object.keys(user).length == 0 && next(400)
+      response = User.findByIdAndUpdate(userId, {$set: update}, { new: true, useFindAndModify: false});
     
-    return res.status(200).send(response2)
+    } else {
+      if(req.decoded.roles.admin){  
+        const validEmail = await User.findOne({email: userId });
+        !validEmail && next(404)
+      }else{
+        req.decoded.email !== userId && next(403) 
+        req.decoded.email === userId && req.body.roles && next(403)
+      }
+      if(Object.keys(update).length == 0){return next(400)}
+
+      response =await User.findOneAndUpdate({email: userId}, {$set: update}, { new: true, useFindAndModify: false});
+    } 
+    !response && next(403) 
+
+    return res.status(200).send(response)
 
   } catch (error) {
-    console.log('error en catch 106')
     next(404)
   }
 
