@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const User = require('../models/Users')
 const { secret } = config;
-
+const bcrypt = require('bcrypt')
 /** @module auth */
 module.exports = (app, nextMain) => {
   /**
@@ -22,25 +22,42 @@ module.exports = (app, nextMain) => {
     // if (!email || !password) {
     //   return next(400);
     // }
-    const user = await User.findOne({ email: req.body.email });
+    
+ 
+
+    const user = await User.findOne({ email: req.body.email }, function(err, doc){
+      // console.log(doc)
+      bcrypt.compare( req.body.password, doc.password,
+        (err,data)=> { 
+        console.log(data)
+        console.log(req.body.password);
+        console.log(doc.password)
+        if(err){console.info(err)} 
+        
+        else if(data) {return next(console.log(':C'), 404)}
+      
+        console.log('entré')
+        const token = jwt.sign({ id: doc._id, roles:doc.roles, email:doc.email}, config.secret, {
+          expiresIn: 60 * 60 *6,
+        });
+        res.status(200).json({ auth: true, token });
+    
+        // TODO: autenticar a la usuarix 2° - Ready
+       //next();
+      
+      }
+  
+        
+      );
+    });
+    
     if (!user) {
       return res.status(404).send("The email doesn't exists");
     }
    
-    const validPassword = await user.comparePassword(
-      req.body.password,
-      user.password
-    );
-    if (!validPassword) {
-      return res.status(401).send({ auth: false, token: null });
-    }
-    const token = jwt.sign({ id: user._id, roles:user.roles, email:user.email}, config.secret, {
-      expiresIn: 60 * 60 *6,
-    });
-    res.status(200).json({ auth: true, token });
 
-    // TODO: autenticar a la usuarix 2° - Ready
-   //next();
+
+    
   });
 
 
