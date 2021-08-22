@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const objectId = require('mongoose').Types.ObjectId ; // es un schemaType de objectId de mongoose
 const bcrypt = require('bcrypt');
+
+
 const getUser = async(req, res, next) => {
   try {
     let userId = req.params.uid;
@@ -55,8 +57,7 @@ const saveUser= async(req, res, next) => {
     // user.password = await user.encryptPassword(password); 
 
     const userValidated =  User.findOne({email:email});
-    userValidated.then((doc) => { if (doc) {
-          return next(403);} })
+    userValidated.then((doc) =>  doc && next(403) )
 
     const response = await user.save();
     const finalResponse = await User.findOne({email: response.email}).select('-password');

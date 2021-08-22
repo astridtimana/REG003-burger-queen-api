@@ -6,17 +6,17 @@ const {
 
 
 describe('POST /orders', () => {
-  it.skip('should fail with 401 when no auth', () => (
+  it('should fail with 401 when no auth', () => (
     fetch('/orders', { method: 'POST' })
       .then((resp) => expect(resp.status).toBe(401))
   ));
 
-  it.skip('should fail with 400 when bad props', () => (
+  it('should fail with 400 when bad props', () => (
     fetchAsTestUser('/orders', { method: 'POST', body: {} })
       .then((resp) => expect(resp.status).toBe(400))
   ));
 
-  it.skip('should fail with 400 when empty items', () => (
+  it('should fail with 400 when empty items', () => (
     fetchAsTestUser('/orders', {
       method: 'POST',
       body: { products: [] },
@@ -26,7 +26,7 @@ describe('POST /orders', () => {
       })
   ));
 
-  it.skip('should create order as user (own order)', () => (
+  it('should create order as user (own order)', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -58,7 +58,7 @@ describe('POST /orders', () => {
       })
   ));
 
-  it.skip('should create order as admin', () => (
+  it('should create order as admin', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -92,12 +92,12 @@ describe('POST /orders', () => {
 
 
 describe('GET /orders', () => {
-  it.skip('should fail with 401 when no auth', () => (
+  it('should fail with 401 when no auth', () => (
     fetch('/orders')
       .then((resp) => expect(resp.status).toBe(401))
   ));
 
-  it.skip('should get orders as user', () => (
+  it('should get orders as user', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -143,7 +143,7 @@ describe('GET /orders', () => {
       })
   ));
 
-  it.skip('should get orders as admin', () => (
+  it('should get orders as admin', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -192,17 +192,17 @@ describe('GET /orders', () => {
 
 
 describe('GET /orders/:orderId', () => {
-  it.skip('should fail with 401 when no auth', () => (
+  it('should fail with 401 when no auth', () => (
     fetch('/orders/xxx')
       .then((resp) => expect(resp.status).toBe(401))
   ));
 
-  it.skip('should fail with 404 when admin and not found', () => (
+  it('should fail with 404 when admin and not found', () => (
     fetchAsAdmin('/orders/xxx')
       .then((resp) => expect(resp.status).toBe(404))
   ));
 
-  it.skip('should get order as user', () => (
+  it('should get order as user', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -235,7 +235,7 @@ describe('GET /orders/:orderId', () => {
       })
   ));
 
-  it.skip('should get order as admin', () => (
+  it('should get order as admin', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -271,12 +271,12 @@ describe('GET /orders/:orderId', () => {
 
 
 describe('PUT /orders/:orderId', () => {
-  it.skip('should fail with 401 when no auth', () => (
+  it('should fail with 401 when no auth', () => (
     fetch('/orders/xxx', { method: 'PUT' })
       .then((resp) => expect(resp.status).toBe(401))
   ));
 
-  it.skip('should fail with 404 when not found', () => (
+  it('should fail with 404 when not found', () => (
     fetchAsAdmin('/orders/xxx', {
       method: 'PUT',
       body: { state: 'canceled' },
@@ -284,7 +284,7 @@ describe('PUT /orders/:orderId', () => {
       .then((resp) => expect(resp.status).toBe(404))
   ));
 
-  it.skip('should fail with 400 when bad props', () => (
+  it('should fail with 400 when bad props', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -311,7 +311,7 @@ describe('PUT /orders/:orderId', () => {
       .then((resp) => expect(resp.status).toBe(400))
   ));
 
-  it.skip('should fail with 400 when bad status', () => (
+  it('should fail with 400 when bad status', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -339,7 +339,7 @@ describe('PUT /orders/:orderId', () => {
       .then((resp) => expect(resp.status).toBe(400))
   ));
 
-  it.skip('should update order (set status to preparing)', () => (
+  it('should update order (set status to preparing)', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -374,7 +374,7 @@ describe('PUT /orders/:orderId', () => {
       .then((json) => expect(json.status).toBe('preparing'))
   ));
 
-  it.skip('should update order (set status to delivering)', () => (
+  it('should update order (set status to delivering)', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -409,7 +409,7 @@ describe('PUT /orders/:orderId', () => {
       .then((json) => expect(json.status).toBe('delivering'))
   ));
 
-  it.skip('should update order (set status to delivered)', () => (
+  it('should update order (set status to delivered)', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -450,17 +450,17 @@ describe('PUT /orders/:orderId', () => {
 
 
 describe('DELETE /orders/:orderId', () => {
-  it.skip('should fail with 401 when no auth', () => (
+  it('should fail with 401 when no auth', () => (
     fetch('/orders/xxx', { method: 'DELETE' })
       .then((resp) => expect(resp.status).toBe(401))
   ));
 
-  it.skip('should fail with 404 when not found', () => (
+  it('should fail with 404 when not found', () => (
     fetchAsAdmin('/orders/xxx', { method: 'DELETE' })
       .then((resp) => expect(resp.status).toBe(404))
   ));
 
-  it.skip('should delete other order as admin', () => (
+  it('should delete other order as admin', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
