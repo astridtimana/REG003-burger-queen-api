@@ -1,16 +1,19 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/Users')
 
-module.exports = (secret) => (req, resp, next) => {
+module.exports = (secret) => (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
+    //return res.status(403).send({message:'No tienes autorización'})
     return next();
   }
 
   const [type, token] = authorization.split(' ');
 
   if (type.toLowerCase() !== 'bearer') {
-    return next();
+    return res.status(400).send({message:'Type no es "bearer" '})
+    //return next();
   }
 
   jwt.verify(token, secret, (err, decodedToken) => {
@@ -18,20 +21,36 @@ module.exports = (secret) => (req, resp, next) => {
       return next(403);
     }
 
-    // TODO: Verificar identidad del usuario usando `decodeToken.uid`
+    const userValidated = User.findById(decodedToken.id)
+    userValidated.then((user)=>{
+      if (!user) {
+        res.status(404).send({message:`No existe usuario`})
+      }
+      req.decoded = decodedToken
+      next()
+    })      
+    .catch((err) => {
+      res.status(500).send('Internal error')
+    });
+
+    //next()
+    // TODO: Verificar identidad del usuario usando `decodeToken.uid` 2nd
   });
+
+
 };
 
 
 module.exports.isAuthenticated = (req) => (
   // TODO: decidir por la informacion del request si la usuaria esta autenticada
-  false
+  req.decoded||false
+  
 );
 
 
 module.exports.isAdmin = (req) => (
   // TODO: decidir por la informacion del request si la usuaria es admin
-  false
+  req.decoded.roles.admin||false
 );
 
 
