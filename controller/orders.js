@@ -39,17 +39,19 @@ const saveOrder= async (req, res,next) => {
     order.client = req.body.client
     order.products = req.body.products
     order.status = req.body.status
-    order.dateEntry = req.body.dateEntry
-    order.dateProcessed = req.body.dateProcessed
+    // console.log(req.body)
 
-    req.body.products.length == 0 && next(400);
-    Object.keys(req.body).length == 0 && next(400);
+
     
-    const response = await order.save();
+    if(Object.keys(req.body).length == 0 || 
+    req.body.products.length == 0 ){return next(400)}
 
+    const response = await order.save();
+    // console.log('50')
     return res.status(200).send(response)
 
   } catch (error) {
+    console.log('54');
     return res.status(404).send('Error')
   }
  
