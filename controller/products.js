@@ -8,7 +8,7 @@ const getProduct = (req, res, next) => {
       if (err) return res.status(404).send({message:`Error en la petición productID`})
       if (!product) return res.status(404).send({message:`No producto no existe`})
   
-      res.status(200).send({ product })
+      res.status(200).send(product)
     })
   } catch (error) { return res.status(404).send('No existe usuario') }
 }
@@ -50,10 +50,8 @@ const saveProduct= async (req, res, next) => {
 }
 
 const updateProduct = async(req, res,next) => {
-  console.log('48')
   try{
-    let productId = req.params.productId
-    console.log('50', typeof req.params.productId);
+    let productId = req.params.productId;
     let update = req.body
     if (typeof update.price !== 'number'){ return next(400)}
 
