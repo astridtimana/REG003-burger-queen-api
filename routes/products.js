@@ -1,4 +1,4 @@
-const { getProducts, getProduct, saveProduct, updateProduct } = require('../controller/products');
+const { getProducts, getProduct, saveProduct, updateProduct, deleteProduct } = require('../controller/products');
 const {
   requireAuth,
   requireAdmin,
@@ -117,8 +117,7 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es ni admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-  });
+  app.delete('/products/:productId', requireAdmin, deleteProduct);
 
   nextMain();
 };
