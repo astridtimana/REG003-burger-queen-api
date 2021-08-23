@@ -1,52 +1,84 @@
 const Order = require('../models/Orders')
 
-const getOrder = (req, res) => {
-  let orderId = req.params.orderId
-
-  Order.findById(orderId, (err, order)=>{
-    if (err) return res.status(500).send({message:`Error en la petición orderID`})
-    if (!order) return res.status(404).send({message:`Order no existe`})
-
-    res.status(200).send({ order })
-  })
+const getOrder = async (req, res) => {
+  try {
+    let orderId = req.params.orderId
+    if(Object.isVALID(orderId)){
+      await Order.findById(orderId, (err, order)=>{
+        if (err) return res.status(500).send({message:`Error en la petición orderID`})
+        if (!order) return res.status(404).send({message:`Order no existe`})
+    
+        res.status(200).send({ order })
+      })
+    }
+   
+  } catch (error) {
+    return res.status(404).send('Error')
+  }
+  
 }
-const getOrders = (req, res) => {
+
+const getOrders = async (req, res) => {
+  try {
     Order.find({}, (err, orders) => {
-    if (err) return res.status(500).send({message: `Error en la petición colecctionOrders`})
-    if (!orders) return res.status(404).send({message:`No existen órdenes`})
+      if (err) return res.status(500).send({message: `Error en la petición colecctionOrders`})
+      if (!orders) return res.status(404).send({message:`No existen órdenes`})
 
-    res.send(200, { orders })
-  })
+      res.send(200, { orders })
+    })
+  } catch (error) {
+    return res.status(404).send('Error')
+  }
+    
 }
-const saveOrder= (req, res) => {
-  let order = new Order()
-  order.userId = req.body.userId
-  order.client = req.body.client
-  order.products = req.body.products
-  order.status = req.body.status
-  order.dateEntry = req.body.dateEntry
-  order.dateProcessed = req.body.dateProcessed
 
-  order.save((err, orderStored) => {
-    if (err) res.status(500).send({message:`Error al salvar en la base de datos el order`})
+const saveOrder= async (req, res,next) => {
+  try {
+    let order = new Order()
+    order.userId = req.body.userId
+    order.client = req.body.client
+    order.products = req.body.products
+    order.status = req.body.status
+    order.dateEntry = req.body.dateEntry
+    order.dateProcessed = req.body.dateProcessed
 
-    res.status(200).send({order: orderStored })
-  })
+    req.body.products.length == 0 && next(400);
+    Object.keys(req.body).length == 0 && next(400);
+    
+    const response = await order.save();
+
+    return res.status(200).send(response)
+
+  } catch (error) {
+    return res.status(404).send('Error')
+  }
+ 
+
 }
-const updateOrder = (req, res) => {
-  let orderId = req.params.orderId
-  let update = req.body
 
-  Order.findByIdAndUpdate(orderId, update, (err, orderUpdated) => {
-    if (err) res.status(500).send({message:`Error al actualizar el order`})
+const updateOrder = async (req, res) => {
+  try {
+    let orderId = req.params.orderId
+    let update = req.body
 
-    res.status(200).send({ order: orderUpdated })
-  })
+    const orderUpdate= await Order.findByIdAndUpdate(
+      orderId,
+      { $set: update},
+      { new: true, useFindAndModify: false }
+    )
+    res.status(200).send(orderUpdate)
+
+  } catch (error) {
+    return res.status(404).send('Error')
+  }
+  
 }
-const deleteOrder = (req, res) => {
-  let orderId = req.params.orderId
 
-  Order.findById(orderId, (err, order) => {
+const deleteOrder = async (req, res) => {
+  try {
+    let orderId = req.params.orderId
+
+    await Order.findById(orderId, (err, order) => {
     if (err) res.status(500).send({message:`Error al borrar la order`})
 
     order.remove(err => {
@@ -54,6 +86,10 @@ const deleteOrder = (req, res) => {
       res.status(200).send({message:`La order a sido eliminada`})
     })
   })
+  } catch (error) {
+    return res.status(404).send('Error')
+  }
+  
 }
 
  module.exports = {
