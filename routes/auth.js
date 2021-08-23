@@ -28,15 +28,11 @@ module.exports = (app, nextMain) => {
     const user = await User.findOne({ email: req.body.email }, function(err, doc){
       // console.log(doc)
       bcrypt.compare( req.body.password, doc.password,
-        (err,data)=> { 
-        console.log(data)
-        console.log(req.body.password);
-        console.log(doc.password)
+        (err,data)=> {
         if(err){console.info(err)} 
         
         else if(data) {return next(console.log(':C'), 404)}
-      
-        console.log('entré')
+ 
         const token = jwt.sign({ id: doc._id, roles:doc.roles, email:doc.email}, config.secret, {
           expiresIn: 60 * 60 *6,
         });
