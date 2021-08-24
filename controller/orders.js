@@ -24,7 +24,7 @@ const getOrders = async (req, res) => {
       if (err) return res.status(500).send({message: `Error en la petición colecctionOrders`})
       if (!orders) return res.status(404).send({message:`No existen órdenes`})
 
-      res.send(200, { orders })
+      res.send(200,  orders )
     })
   } catch (error) {
     return res.status(404).send('Error')
