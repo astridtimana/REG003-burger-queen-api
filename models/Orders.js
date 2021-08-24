@@ -12,19 +12,19 @@ const orderSchema = new Schema({
     },
     products: [{
       qty: { type: Number},
-      product: { type: Object },
-
+      product: { type: Object }
     }],
     status: {
       type: String,
     },
     dateEntry: {
       type: Date,
-      default: Date.now,
+      required:false,
+      default: Date.now()
     },
     dateProcessed: {
       type: Date,
-      default: Date.now,
+      required:false
     }
 });
 
