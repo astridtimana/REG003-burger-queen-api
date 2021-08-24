@@ -79,15 +79,15 @@ const updateOrder = async (req, res, next) => {
   
 }
 
-const deleteOrder = async (req, res) => {
+const deleteOrder = async (req, res,next) => {
   try {
     let orderId = req.params.orderId
 
     await Order.findById(orderId, (err, order) => {
-    if (err) res.status(500).send({message:`Error al borrar la order`})
+    if (err) res.status(404).send({message:`Error al borrar la order`})
 
     order.remove(err => {
-      if (err) res.status(500).send({message:`Error al borrar la order`})
+      if (err) res.status(404).send({message:`Error al borrar la order`})
       res.status(200).send({message:`La order a sido eliminada`})
     })
   })
