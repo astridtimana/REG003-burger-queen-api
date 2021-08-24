@@ -37,7 +37,7 @@ const saveOrder= async (req, res,next) => {
     order.userId = req.body.userId
     order.client = req.body.client
     order.products = req.body.products
-    order.status = req.body.status
+    order.status = req.body.status||'pending'
     // console.log(req.body)
 
 
@@ -62,15 +62,17 @@ const updateOrder = async (req, res, next) => {
     let orderId = req.params.orderId
     let update = req.body
 
-    if(Object.keys(update).length == 0){ return next(400)}
-
     const orderUpdate= await Order.findByIdAndUpdate(
       orderId,
       { $set: update},
       { new: true, useFindAndModify: false }
     )
-    res.status(200).send(orderUpdate)
 
+    if(update.status!=='pending'||update.status!=='canceled'||update.status!=='delivering'||update.status!=='delivered'){ return next(400)}
+
+    if(Object.keys(update).length == 0){ return next(400)}
+
+    res.status(200).send(orderUpdate)
   } catch (error) {
     return res.status(404).send('Error')
   }
