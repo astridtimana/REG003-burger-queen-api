@@ -3,7 +3,6 @@ const Order = require('../models/Orders')
 const getOrder = async (req, res) => {
   try {
     let orderId = req.params.orderId
-    console.log(orderId)
       await Order.findById(orderId, (err, order)=>{
         if (err) return res.status(404).send({message:`Error en la petición orderID`})
         if (!order) return res.status(404).send({message:`Order no existe`})
@@ -38,7 +37,7 @@ const saveOrder= async (req, res,next) => {
     order.client = req.body.client
     order.products = req.body.products
     order.status = req.body.status||'pending'
-    // console.log(req.body)
+    console.log(req.body)
 
 
     
@@ -61,16 +60,34 @@ const updateOrder = async (req, res, next) => {
   try {
     let orderId = req.params.orderId
     let update = req.body
+    console.log(64)
 
     const orderUpdate= await Order.findByIdAndUpdate(
       orderId,
       { $set: update},
       { new: true, useFindAndModify: false }
     )
+    console.log(71)
 
-    if(update.status!=='pending'||update.status!=='canceled'||update.status!=='delivering'||update.status!=='delivered'){ return next(400)}
+   // if(update.status!=='pending'||update.status!=='canceled'||update.status!=='delivering'||update.status!=='delivered'||update.status!=='preparing'){ return next(400)}
+  //  switch (update.status) {
+  //    case !'pending':
+  //    case !'canceled':
+  //    case !'delivering':
+  //    case !'delivered':
+  //    case !'preparing':
+  //       next(400)
+  //     break;
+   
+  //    default:
+  //     next(200)
+  //      break;
+  //  }
+
+    console.log(74)
 
     if(Object.keys(update).length == 0){ return next(400)}
+    console.log(77)
 
     res.status(200).send(orderUpdate)
   } catch (error) {
