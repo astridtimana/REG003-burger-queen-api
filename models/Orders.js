@@ -8,7 +8,7 @@ const orderSchema = new Schema({
     },
     client: {
       type: String,     
-      required: true,
+      //required: true,
     },
     products: [{
       qty: { type: Number},
