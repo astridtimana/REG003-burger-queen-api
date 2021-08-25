@@ -4,20 +4,12 @@ const getOrder = async (req, res) => {
   try {
     let orderId = req.params.orderId
       let response = await Order.findById(orderId)
-      console.log(response)
+      //console.log(response)
       let finalResponse = await response
         .populate('products.product')
         .execPopulate()
-    
-      // await Order.findById(orderId, (err, order)=>{
-      //   if (err) return res.status(404).send({message:`Error en la petición orderID`})
-      //   if (!order) return res.status(404).send({message:`Order no existe`})
-
-      //   let response =  order.populate('products.product')
-      //     //.execPopulate()
-      //        // console.log(order.products[1].product.name); // sí muestra en el post
+  
         res.status(200).send( finalResponse )
-      //  })
    
   } catch (error) {
     return res.status(404).send('Error')
@@ -58,12 +50,6 @@ const saveOrder= async (req, res,next) => {
 
     const finalResponse = await response.populate('products.product')
     .execPopulate()
-
-    let responseFinaSave = await order.save();
-
-    // console.log('49', finalResponse)
-    // console.log('49', finalResponse.products)
-
 
     return res.status(200).send(finalResponse)
 
