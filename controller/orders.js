@@ -3,17 +3,25 @@ const Order = require('../models/Orders')
 const getOrder = async (req, res) => {
   try {
     let orderId = req.params.orderId
-      await Order.findById(orderId, (err, order)=>{
-        if (err) return res.status(404).send({message:`Error en la petición orderID`})
-        if (!order) return res.status(404).send({message:`Order no existe`})
-       // console.log(order.products[1].product.name); // sí muestra en el post
-        res.status(200).send( order)
-      })
+      let response = await Order.findById(orderId)
+      console.log(response)
+      let finalResponse = await response
+        .populate('products.product')
+        .execPopulate()
+    
+      // await Order.findById(orderId, (err, order)=>{
+      //   if (err) return res.status(404).send({message:`Error en la petición orderID`})
+      //   if (!order) return res.status(404).send({message:`Order no existe`})
+
+      //   let response =  order.populate('products.product')
+      //     //.execPopulate()
+      //        // console.log(order.products[1].product.name); // sí muestra en el post
+        res.status(200).send( finalResponse )
+      //  })
    
   } catch (error) {
     return res.status(404).send('Error')
   }
-  
 }
 
 const getOrders = async (req, res) => {
@@ -26,48 +34,57 @@ const getOrders = async (req, res) => {
     })
   } catch (error) {
     return res.status(404).send('Error')
-  }
-    
+  }   
 }
 
 const saveOrder= async (req, res,next) => {
   try {
-    let order = new Order()
-    order.userId = req.body.userId
-    order.client = req.body.client
-    order.products = req.body.products
-    order.status = req.body.status||'pending'
-    console.log(req.body)
+    const {userId, client, products, status } = req.body
 
-
-    
     if(Object.keys(req.body).length == 0 || 
     req.body.products.length == 0 ){return next(400)}
 
-    const response = await order.save();
-    // console.log('50')
-    return res.status(200).send(response)
+    let order = new Order({
+      userId: userId,
+      client: client,
+      products: products.map((product) => ({
+        qty: product.qty,
+        product: product.productId
+      })),  
+      status : status||'pending'
+    })
+
+     let response = await order.save();
+
+    const finalResponse = await response.populate('products.product')
+    .execPopulate()
+
+    let responseFinaSave = await order.save();
+
+    // console.log('49', finalResponse)
+    // console.log('49', finalResponse.products)
+
+
+    return res.status(200).send(finalResponse)
 
   } catch (error) {
-    console.log('54');
+    console.log('60');
     return res.status(404).send('Error')
   }
- 
-
 }
 
 const updateOrder = async (req, res, next) => {
   try {
     let orderId = req.params.orderId
     let update = req.body
-    console.log(64)
+    //console.log(64)
 
     const orderUpdate= await Order.findByIdAndUpdate(
       orderId,
       { $set: update},
       { new: true, useFindAndModify: false }
     )
-    console.log(71)
+    //console.log(71)
 
    // if(update.status!=='pending'||update.status!=='canceled'||update.status!=='delivering'||update.status!=='delivered'||update.status!=='preparing'){ return next(400)}
   //  switch (update.status) {
@@ -84,10 +101,10 @@ const updateOrder = async (req, res, next) => {
   //      break;
   //  }
 
-    console.log(74)
+    //console.log(74)
 
     if(Object.keys(update).length == 0){ return next(400)}
-    console.log(77)
+    //console.log(77)
 
     res.status(200).send(orderUpdate)
   } catch (error) {
