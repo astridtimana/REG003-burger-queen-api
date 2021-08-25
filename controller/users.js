@@ -12,12 +12,13 @@ const getUser = async(req, res, next) => {
 
     // identificamos si el params es objectId o email
     if(objectId.isValid(userId)){
-      !req.decoded.roles.admin && req.decoded.id !== userId 
-      ? next(403) 
-      : response = await User.findById(userId)
+      if(!req.decoded.roles.admin && req.decoded.id !== userId){
+        return next(403) 
+      }
+       response = await User.findById(userId)
     } else{  
-      !req.decoded.roles.admin && req.decoded.email !== userId 
-      ? next(403) : response = await User.findOne({ email: userId });
+      if(!req.decoded.roles.admin && req.decoded.email !== userId){return next(403)}
+       response = await User.findOne({ email: userId });
     }
     if (!response) { return next(404) }
     return res.status(200).send(response)
@@ -26,15 +27,14 @@ const getUser = async(req, res, next) => {
 }
 
 const getUsers = (req, res) => {
-  try {
+
     User.find({}, (err, users) => {
       if (err) return res.status(500).send({message: `Error en la petición colecctionUsers`})
       if (!users) return res.status(404).send({message:`No existen usuarios`})
 
       // return res.send(200, { users })
-      return res.send(JSON.stringify(users))
+      return res.status(200).send(users)
     })
-  } catch (error) { return res.status(404).send('No existe usuario') }
 
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
 
@@ -110,13 +110,14 @@ const deleteuser = async(req, res,next) => {
 
     // identificamos si el params es objectId o email
     if(objectId.isValid(userId)){
-      !req.decoded.roles.admin && req.decoded.id !== userId 
-      ? next(403) 
-      : response = await User.findById(userId)
+
+      if(!req.decoded.roles.admin && req.decoded.id !== userId){return next(403)}
+        response = await User.findById(userId)
     } else{
-        !req.decoded.roles.admin && req.decoded.email !== userId 
-        ? next(403) 
-        : response = await User.findOne({ email: userId })
+      if(!req.decoded.roles.admin && req.decoded.email !== userId ){
+        return next(403)
+      }
+        response = await User.findOne({ email: userId })
     }
       response.remove()
       if (!response) { return next(404) }
