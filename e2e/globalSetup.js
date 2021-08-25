@@ -2,7 +2,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const nodeFetch = require('node-fetch');
 const kill = require('tree-kill');
-
+const mongoSetup = require('@shelf/jest-mongodb/setup');
 const config = require('../config');
 
 const port = process.env.PORT || 8888;
@@ -110,7 +110,7 @@ module.exports = () => new Promise((resolve, reject) => {
   }
 
   // TODO: Configurar DB de tests
-
+  mongoSetup().then(() => {
   console.info('Staring local server...');
   const child = spawn('npm', ['start', process.env.PORT || 8888], {
     cwd: path.resolve(__dirname, '../'),
@@ -144,6 +144,7 @@ module.exports = () => new Promise((resolve, reject) => {
     .catch((err) => {
       kill(child.pid, 'SIGKILL', () => reject(err));
     });
+  });
 });
 
 // Export globals - ugly... :-(
