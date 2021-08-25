@@ -1,6 +1,6 @@
 const User = require('../models/Users');
 const jwt = require('jsonwebtoken');
-const config = require('../config');
+const config = require('../../config');
 const objectId = require('mongoose').Types.ObjectId ; // es un schemaType de objectId de mongoose
 const bcrypt = require('bcrypt');
 
@@ -26,15 +26,17 @@ const getUser = async(req, res, next) => {
   // BUSCAR PAGINATION
 }
 
-const getUsers = (req, res) => {
+const getUsers = async (req, res) => {
+    try {
 
-    User.find({}, (err, users) => {
-      if (err) return res.status(500).send({message: `Error en la petición colecctionUsers`})
-      if (!users) return res.status(404).send({message:`No existen usuarios`})
+      const limit = parseInt(req.query.limit,10) || 10;
+      const page = parseInt(req.query.page,10) || 1;
+      
+      const response =await User.paginate({}, {limit,page})
 
-      // return res.send(200, { users })
-      return res.status(200).send(users)
-    })
+      return res.status(200).send(response.docs)
+
+    }  catch (error) { return res.status(404).send('No existe usuario') }
 
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
 
