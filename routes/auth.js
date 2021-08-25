@@ -18,44 +18,46 @@ module.exports = (app, nextMain) => {
    * @auth No requiere autenticación
    */
    app.post('/auth', async (req, res, next) => {
-    // const { email, password } = req.body;
-    // if (!email || !password) {
-    //   return next(400);
-    // }
-    
- 
 
-    const user = await User.findOne({ email: req.body.email }, function(err, doc){
+  try{
+
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(400);
+    }
+
+    Object.keys(req.body).length == 0 && next(400)
+    Object.keys(req.body.email).length == 0 && next(400)
+
+    const user = await User.findOne({ email: req.body.email });
       // console.log(doc)
-      bcrypt.compare( req.body.password, doc.password,
+      bcrypt.compare( req.body.password, user.password,
         (err,data)=> {
         if(err){console.info(err)} 
         
         else if(data) {return next(console.log(':C'), 404)}
  
-        const token = jwt.sign({ id: doc._id, roles:doc.roles, email:doc.email}, config.secret, {
+        const token = jwt.sign({ id: user._id, roles:user.roles, email:user.email}, config.secret, {
           expiresIn: 60 * 60 *6,
         });
-        res.status(200).json({ auth: true, token });
+
+        res.status(200).send({ auth: true, token });
     
         // TODO: autenticar a la usuarix 2° - Ready
        //next();
-      
-      }
-  
-        
+       }  
       );
-    });
-    
     if (!user) {
       return res.status(404).send("The email doesn't exists");
     }
-   
 
+    res.status(200)
 
-    
+  } catch (error) {
+    return next(404);
+  }
+
   });
-
 
   return nextMain();
 };
