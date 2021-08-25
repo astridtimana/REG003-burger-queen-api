@@ -3,12 +3,16 @@ const Order = require('../models/Orders')
 const getOrder = async (req, res) => {
   try {
     let orderId = req.params.orderId
-      await Order.findById(orderId, (err, order)=>{
-        if (err) return res.status(404).send({message:`Error en la petición orderID`})
-        if (!order) return res.status(404).send({message:`Order no existe`})
-       // console.log(order.products[1].product.name); // sí muestra en el post
-        res.status(200).send( order)
-      })
+      await Order.findById(orderId)
+      .populate('products.products')
+      .exec(
+        (err, order)=>{
+          if (err) return res.status(404).send({message:`Error en la petición orderID`})
+          if (!order) return res.status(404).send({message:`Order no existe`})
+         // console.log(order.products[1].product.name); // sí muestra en el post
+          res.status(200).send( order)
+        }
+      )
    
   } catch (error) {
     return res.status(404).send('Error')
@@ -37,23 +41,22 @@ const saveOrder= async (req, res,next) => {
     order.client = req.body.client
     order.products = req.body.products
     order.status = req.body.status||'pending'
-    console.log(req.body)
 
+    const response = await order.save();
+    const finalResponse = await response.populate('products.products')
+    .execPopulate()
 
-    
     if(Object.keys(req.body).length == 0 || 
     req.body.products.length == 0 ){return next(400)}
 
-    const response = await order.save();
+    //const response = await order.save();
     // console.log('50')
-    return res.status(200).send(response)
+    return res.status(200).send(finalResponse)
 
   } catch (error) {
-    console.log('54');
+    //console.log('54');
     return res.status(404).send('Error')
   }
- 
-
 }
 
 const updateOrder = async (req, res, next) => {
