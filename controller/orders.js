@@ -46,6 +46,7 @@ const saveOrder= async (req, res,next) => {
       status : status||'pending'
     })
 
+
      let response = await order.save();
 
     const finalResponse = await response.populate('products.product')
@@ -72,20 +73,18 @@ const updateOrder = async (req, res, next) => {
     )
     //console.log(71)
 
-   // if(update.status!=='pending'||update.status!=='canceled'||update.status!=='delivering'||update.status!=='delivered'||update.status!=='preparing'){ return next(400)}
-  //  switch (update.status) {
-  //    case !'pending':
-  //    case !'canceled':
-  //    case !'delivering':
-  //    case !'delivered':
-  //    case !'preparing':
-  //       next(400)
-  //     break;
-   
-  //    default:
-  //     next(200)
-  //      break;
-  //  }
+    switch (update.status) {
+      case 'pending':
+      case 'canceled':
+      case 'delivering':
+      case 'delivered':
+      case 'preparing':
+       break;
+    
+      default:
+       next(400)
+        break;
+    }
 
     //console.log(74)
 
@@ -103,15 +102,13 @@ const deleteOrder = async (req, res, next) => {
   try {
     let orderId = req.params.orderId
 
-    await Order.findById(orderId, (err, order) => {
-    if (err) res.status(404).send({message:`Error al borrar la order`})
+   const response =  await Order.findById(orderId)
 
-    order.remove(err => {
-      if (err) res.status(404).send({message:`Error al borrar la order`})
-      res.status(200).send({message:`La order a sido eliminada`})
-    })
-  })
-  } catch (error) {
+    const finalResponse = await response.remove()
+
+    return res.status(200).send(finalResponse)
+  }
+   catch (error) {
     return res.status(404).send('Error')
   }
   
