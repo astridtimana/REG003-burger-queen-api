@@ -10,8 +10,12 @@ const signIn = async (req, res, next) => {
       return next(400);
     }
 
-    Object.keys(req.body).length == 0 && next(400);
-    Object.keys(req.body.email).length == 0 && next(400);
+    if (Object.keys(req.body).length == 0) {
+      return next(400);
+    }
+    if (Object.keys(req.body.email).length == 0) {
+      return next(400);
+    }
 
     const user = await User.findOne({ email: req.body.email });
     // console.log(doc)
@@ -19,7 +23,7 @@ const signIn = async (req, res, next) => {
       if (err) {
         console.info(err);
       } else if (data) {
-        return next(console.log(":C"), 404);
+        return next(404);
       }
 
       const token = jwt.sign(
