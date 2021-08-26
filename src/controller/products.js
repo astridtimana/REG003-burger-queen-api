@@ -1,8 +1,6 @@
 const Product = require("../models/Products");
-const objectId = require("mongoose").Types.ObjectId;
 
 const getProduct = (req, res, next) => {
-  try {
     let productId = req.params.productId;
     Product.findById(productId, (err, product) => {
       if (err)
@@ -14,13 +12,9 @@ const getProduct = (req, res, next) => {
 
       res.status(200).send(product);
     });
-  } catch (error) {
-    return res.status(404).send("No existe usuario");
-  }
 };
 
 const getProducts = (req, res, next) => {
-  try {
     Product.find({}, (err, products) => {
       if (err)
         return res
@@ -31,9 +25,6 @@ const getProducts = (req, res, next) => {
 
       return res.status(200).send(products);
     });
-  } catch (error) {
-    return res.status(404).send("No existe colleción para productos");
-  }
 };
 
 const saveProduct = async (req, res, next) => {
@@ -57,7 +48,7 @@ const saveProduct = async (req, res, next) => {
       res.status(200).json(response);
     }
   } catch (error) {
-    return res.status(404).send("No existe colleción para productos");
+    return next(404);
   }
 };
 
@@ -76,24 +67,28 @@ const updateProduct = async (req, res, next) => {
     );
     res.status(200).send(productUpdate);
   } catch (error) {
-    return res.status(404).send("No existe producto");
+    return next(404);
   }
 };
 
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
   try {
     let productId = req.params.productId;
     let response = null;
 
     response = await Product.findOne({ _id: productId });
-    !req.decoded.admin && !response && next(404);
+    if (!req.decoded.admin && !response) {
+      return next(404);
+    }
 
     response.deleteOne();
 
-    !response && next(404);
+    if (!response) {
+      return next(404);
+    }
     res.status(200).send(response);
   } catch (error) {
-    return res.status(404).send("No existe usuario");
+    return next(404);
   }
 };
 
