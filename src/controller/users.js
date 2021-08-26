@@ -2,7 +2,8 @@ const User = require("../models/Users");
 const { 
   linkHeader,
   validObjectId,
-  validEmail
+  validEmail,
+  isEmptyObj
 } = require("../helper");
 const { isAdmin } = require('../middleware/auth');
 
@@ -101,7 +102,7 @@ const updateuser = async (req, res, next) => {
       if (!isAdmin(req) && req.decoded.id !== userId) {
         return next(403);
       }
-      if (Object.keys(user).length == 0) {
+      if (isEmptyObj(user)) {
         return next(400);
       }
       response = User.findByIdAndUpdate(
@@ -123,7 +124,7 @@ const updateuser = async (req, res, next) => {
           return next(403);
         }
       }
-      if (Object.keys(update).length == 0) {
+      if (isEmptyObj(update)) {
         return next(400);
       }
 

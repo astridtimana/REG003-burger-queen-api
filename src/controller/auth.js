@@ -2,6 +2,9 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/Users");
 const config = require("../../config");
 const bcrypt = require("bcrypt");
+const { 
+  isEmptyObj
+} = require("../helper");
 
 const signIn = async (req, res, next) => {
   try {
@@ -10,10 +13,10 @@ const signIn = async (req, res, next) => {
       return next(400);
     }
 
-    if (Object.keys(req.body).length == 0) {
+    if (isEmptyObj(req.body)) {
       return next(400);
     }
-    if (Object.keys(req.body.email).length == 0) {
+    if (isEmptyObj(req.body.email)){
       return next(400);
     }
 

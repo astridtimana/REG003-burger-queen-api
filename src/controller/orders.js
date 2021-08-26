@@ -1,4 +1,7 @@
 const Order = require("../models/Orders");
+const { 
+isEmptyObj
+} = require("../helper");
 
 const getOrder = async (req, res, next) => {
   try {
@@ -31,7 +34,7 @@ const saveOrder = async (req, res, next) => {
   try {
     const { userId, client, products, status } = req.body;
 
-    if (Object.keys(req.body).length == 0 || req.body.products.length == 0) {
+    if (isEmptyObj(req.body) || req.body.products.length == 0) {
       return next(400);
     }
 
@@ -81,7 +84,7 @@ const updateOrder = async (req, res, next) => {
         break;
     }
 
-    if (Object.keys(update).length == 0) {
+    if (isEmptyObj(update)) {
       return next(400);
     }
 
@@ -112,7 +115,3 @@ module.exports = {
   updateOrder,
   deleteOrder,
 };
-// module.exports = {
-//   getUsers: (req, resp, next) => {
-//   },
-// };

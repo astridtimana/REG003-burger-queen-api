@@ -6,7 +6,7 @@ const linkHeader = (limit, page, totalPages , url, response) =>{
     next: response.hasNextPage ? `${url}?limit=${limit}&page=${page+1}` : `${url}?limit=${limit}&page=${page}`,
     prev: response.hasPrevPage ? `${url}?limit=${limit}&page=${page-1}` :`${url}?limit=${limit}&page=${page}` , 
     last: `${url}?limit=${limit}&page=${totalPages}`,
-}
+ }
     return link;
 };
 
@@ -17,10 +17,13 @@ const validEmail = (email) => {
     return regEx.test(email);
 };
 
-
+const isEmptyObj = (reqBody) => {
+    return Object.keys(reqBody).length == 0? true : false
+};
 
 module.exports={
     linkHeader,
     validObjectId,
+    isEmptyObj,
     validEmail
 }
