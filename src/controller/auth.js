@@ -16,13 +16,13 @@ const signIn = async (req, res, next) => {
     if (isEmptyObj(req.body)) {
       return next(400);
     }
-    if (isEmptyObj(req.body.email)){
+    if (isEmptyObj(email)){
       return next(400);
     }
 
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: email });
     // console.log(doc)
-    bcrypt.compare(req.body.password, user.password, (err, data) => {
+    bcrypt.compare(password, user.password, (err, data) => {
       if (err) {
         console.info(err);
       } else if (data) {

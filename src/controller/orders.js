@@ -34,7 +34,7 @@ const saveOrder = async (req, res, next) => {
   try {
     const { userId, client, products, status } = req.body;
 
-    if (isEmptyObj(req.body) || req.body.products.length == 0) {
+    if (isEmptyObj(req.body) || products.length == 0) {
       return next(400);
     }
 
