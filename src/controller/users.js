@@ -1,9 +1,8 @@
 const User = require('../models/Users');
 const jwt = require('jsonwebtoken');
-const config = require('../config');
 const objectId = require('mongoose').Types.ObjectId ; // es un schemaType de objectId de mongoose
 const bcrypt = require('bcrypt');
-
+const {linkHeader }= require('../helper')
 
 const getUser = async(req, res, next) => {
   try {
@@ -23,18 +22,29 @@ const getUser = async(req, res, next) => {
     if (!response) { return next(404) }
     return res.status(200).send(response)
   } catch (error) { return res.status(404).send('No existe usuario') }
-  // BUSCAR PAGINATION
 }
 
-const getUsers = (req, res) => {
+const getUsers = async (req, res) => {
+    try {
+      // console.log(req.protocol) HTTP
+      // console.log(req.path) ENDPOINT
+      //console.log(req.get('host')) LOCALHOST
 
-    User.find({}, (err, users) => {
-      if (err) return res.status(500).send({message: `Error en la petición colecctionUsers`})
-      if (!users) return res.status(404).send({message:`No existen usuarios`})
+      const limit = parseInt(req.query.limit,10) || 10;
+      
+      const page = parseInt(req.query.page,10) || 1;
+     
+      const response =await User.paginate({}, {limit,page})
+      
+      const url = `${req.protocol}://${req.get('host') + req.path}`;
+     
+      const links = linkHeader(limit, page, response.totalPages , url, response);
+     
+      res.links(links)
+      return res.status(200).json(response.docs)
 
-      // return res.send(200, { users })
-      return res.status(200).send(users)
-    })
+    }  catch (error) { 
+      return res.status(404).send('No existe usuario') }
 
 } //FALTA HEADER PARAMETERS, QUERY PARAMETERS Y MANEJO DE STATUS
 
