@@ -7,7 +7,6 @@ const getOrder = async (req, res, next) => {
   try {
     let orderId = req.params.orderId;
     let response = await Order.findById(orderId);
-    //console.log(response)
     let finalResponse = await response
       .populate("products.product")
       .execPopulate();

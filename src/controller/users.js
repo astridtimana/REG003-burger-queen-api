@@ -1,11 +1,11 @@
 const User = require("../models/Users");
-const { 
+const {
   linkHeader,
   validObjectId,
   validEmail,
-  isEmptyObj
+  isEmptyObj,
 } = require("../helper");
-const { isAdmin } = require('../middleware/auth');
+const { isAdmin } = require("../middleware/auth");
 
 const getUser = async (req, res, next) => {
   try {
@@ -64,7 +64,9 @@ const saveUser = async (req, res, next) => {
       roles: roles,
     });
 
-    if(!validEmail(email)){return next(400)};
+    if (!validEmail(email)) {
+      return next(400);
+    }
 
     if (!email || !password) {
       return res.status(400).send({ message: "No hay password ni contraseña" });
@@ -178,7 +180,3 @@ module.exports = {
   deleteuser,
   updateuser,
 };
-// module.exports = {
-//   getUsers: (req, resp, next) => {
-//   },
-// };

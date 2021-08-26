@@ -1,49 +1,49 @@
 const Product = require("../models/Products");
-
+const { 
+  isEmptyObj
+  } = require("../helper");
+  const { isAdmin } = require("../middleware/auth");
+   
 const getProduct = (req, res, next) => {
-    let productId = req.params.productId;
-    Product.findById(productId, (err, product) => {
-      if (err)
-        return res
-          .status(404)
-          .send({ message: `Error en la petición productID` });
-      if (!product)
-        return res.status(404).send({ message: `No producto no existe` });
+  let productId = req.params.productId;
+  Product.findById(productId, (err, product) => {
+    if (err)
+      return res
+        .status(404)
+        .send({ message: `Error en la petición productID` });
+    if (!product)
+      return res.status(404).send({ message: `No producto no existe` });
 
-      res.status(200).send(product);
-    });
+    res.status(200).send(product);
+  });
 };
 
 const getProducts = (req, res, next) => {
-    Product.find({}, (err, products) => {
-      if (err)
-        return res
-          .status(404)
-          .send({ message: `Error en la petición colecctionProducts` });
-      if (!products)
-        return res.status(404).send({ message: `No existen productos` });
+  Product.find({}, (err, products) => {
+    if (err)
+      return res
+        .status(404)
+        .send({ message: `Error en la petición colecctionProducts` });
+    if (!products)
+      return res.status(404).send({ message: `No existen productos` });
 
-      return res.status(200).send(products);
-    });
+    return res.status(200).send(products);
+  });
 };
 
 const saveProduct = async (req, res, next) => {
   try {
-    let product = new Product();
-    product.name = req.body.name;
-    product.price = req.body.price;
-    product.image = req.body.image;
-    product.type = req.body.type;
-    product.dateEntry = req.body.dateEntry;
-
-    let response = null;
     let reqBody = req.body;
 
-    if (Object.keys(reqBody).length == 0) {
+    let product = new Product(reqBody);
+
+    let response = null;
+
+    if (isEmptyObj(reqBody)) {
       return next(400);
     }
 
-    if (req.decoded.roles.admin) {
+    if (isAdmin(req)) {
       response = await product.save();
       res.status(200).json(response);
     }
@@ -77,7 +77,7 @@ const deleteProduct = async (req, res, next) => {
     let response = null;
 
     response = await Product.findOne({ _id: productId });
-    if (!req.decoded.admin && !response) {
+    if (!isAdmin(req) && !response) {
       return next(404);
     }
 
@@ -99,7 +99,3 @@ module.exports = {
   deleteProduct,
   updateProduct,
 };
-// module.exports = {
-//   getUsers: (req, resp, next) => {
-//   },
-// };
