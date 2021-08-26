@@ -1,6 +1,10 @@
 const User = require("../models/Users");
-const objectId = require("mongoose").Types.ObjectId; // es un schemaType de objectId de mongoose
-const { linkHeader } = require("../helper");
+const { 
+  linkHeader,
+  validObjectId,
+  validEmail
+} = require("../helper");
+const { isAdmin } = require('../middleware/auth');
 
 const getUser = async (req, res, next) => {
   try {
@@ -8,13 +12,13 @@ const getUser = async (req, res, next) => {
     let response = null;
 
     // identificamos si el params es objectId o email
-    if (objectId.isValid(userId)) {
-      if (!req.decoded.roles.admin && req.decoded.id !== userId) {
+    if (validObjectId(userId)) {
+      if (!isAdmin(req) && req.decoded.id !== userId) {
         return next(403);
       }
       response = await User.findById(userId);
     } else {
-      if (!req.decoded.roles.admin && req.decoded.email !== userId) {
+      if (!isAdmin(req) && req.decoded.email !== userId) {
         return next(403);
       }
       response = await User.findOne({ email: userId });
@@ -58,11 +62,8 @@ const saveUser = async (req, res, next) => {
       password: password,
       roles: roles,
     });
-    //console.log(user)
-    let regEx = /\S+@\S+/;
-    if (!regEx.test(req.body.email)) {
-      return next(400);
-    }
+
+    if(!validEmail(email)){return next(400)};
 
     if (!email || !password) {
       return res.status(400).send({ message: "No hay password ni contraseña" });
@@ -96,8 +97,8 @@ const updateuser = async (req, res, next) => {
 
     let response = null;
 
-    if (objectId.isValid(userId)) {
-      if (!req.decoded.roles.admin && req.decoded.id !== userId) {
+    if (validObjectId(userId)) {
+      if (!isAdmin(req) && req.decoded.id !== userId) {
         return next(403);
       }
       if (Object.keys(user).length == 0) {
@@ -109,7 +110,7 @@ const updateuser = async (req, res, next) => {
         { new: true, useFindAndModify: false }
       );
     } else {
-      if (req.decoded.roles.admin) {
+      if (isAdmin(req)) {
         const validEmail = await User.findOne({ email: userId });
         if (!validEmail) {
           return next(404);
@@ -118,7 +119,7 @@ const updateuser = async (req, res, next) => {
         if (req.decoded.email !== userId) {
           return next(403);
         }
-        if (req.decoded.email === userId && req.body.roles) {
+        if (req.decoded.email === userId && update.roles) {
           return next(403);
         }
       }
@@ -148,13 +149,13 @@ const deleteuser = async (req, res, next) => {
     let response = null;
 
     // identificamos si el params es objectId o email
-    if (objectId.isValid(userId)) {
-      if (!req.decoded.roles.admin && req.decoded.id !== userId) {
+    if (validObjectId(userId)) {
+      if (!isAdmin(req) && req.decoded.id !== userId) {
         return next(403);
       }
       response = await User.findById(userId);
     } else {
-      if (!req.decoded.roles.admin && req.decoded.email !== userId) {
+      if (!isAdmin(req) && req.decoded.email !== userId) {
         return next(403);
       }
       response = await User.findOne({ email: userId });
