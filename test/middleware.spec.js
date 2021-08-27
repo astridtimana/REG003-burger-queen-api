@@ -54,45 +54,31 @@ describe('is the user admin ?', () => {
 });
 
 describe('Authorization middleware', () => {
-    // let mockRequest = 'Partial<Request>';
-    // let mockResponse = 'Partial<Response>';
-
     beforeEach(() => {
-        // mockRequest = {};
-        // mockResponse = {
-        //     json: jest.fn()
-        // };
         jest.clearAllMocks();
     });
-
-    it('without headers', async () => {
-        // const expectedResponse = {
-        //     "error": "Missing JWT token from the 'Authorization' header"
-        // };
+    it('should be authenticated', () => {
         requireAuth(req, null, next)
-
         expect(next).toHaveBeenCalled();
+    });
+    it('should not be authenticated', () => {
+        requireAuth('', null, next)
+        expect(next).toHaveBeenCalled();
+        expect(next).toHaveBeenCalledWith(401);
     });
 });
 
 describe('Require Admin middleware', () => {
-    // let mockRequest = 'Partial<Request>';
-    // let mockResponse = 'Partial<Response>';
-
     beforeEach(() => {
-        // mockRequest = {};
-        // mockResponse = {
-        //     json: jest.fn()
-        // };
         jest.clearAllMocks();
     });
-
-    it('without headers', async () => {
-        // const expectedResponse = {
-        //     "error": "Missing JWT token from the 'Authorization' header"
-        // };
+    it('should be recognized as an admin', () => {
         requireAdmin(req, null, next)
-
         expect(next).toHaveBeenCalled();
+    });
+    it('should not be recognized as an admin', () => {
+        requireAdmin(req_3, null, next)
+        expect(next).toHaveBeenCalled();
+        expect(next).toHaveBeenCalledWith(403);
     });
 });
