@@ -7,10 +7,10 @@
     "node": ">=10"
   },
   "scripts": {
-    "pretest": "eslint .",
+    "pretest": "eslint ",
     "start": "node index.js",
     "test:e2e": "jest --verbose --testPathPattern ./e2e --globalSetup ./e2e/globalSetup --globalTeardown ./e2e/globalTeardown --runInBand --detectOpenHandles",
-    "test:unit": "jest --verbose --testPathIgnorePatterns e2e",
+    "test:unit": "jest --verbose  --coverage --testPathIgnorePatterns e2e",
     "test": "npm run test:e2e && npm run test:unit",
     "lint": "eslint .",
     "docs:generate": "jsdoc -c jsdoc.conf --readme README-docs.md",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "docdash": "^1.2.0",
-    "eslint": "^7.21.0",
+    "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "gh-pages": "^3.1.0",
