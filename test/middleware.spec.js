@@ -1,4 +1,5 @@
-const { JsonWebTokenError } = require('jsonwebtoken');
+const  { Request, Response } = require('express');
+
 const {
     isAuthenticated,
     isAdmin,
@@ -52,3 +53,46 @@ describe('is the user admin ?', () => {
     })
 });
 
+describe('Authorization middleware', () => {
+    // let mockRequest = 'Partial<Request>';
+    // let mockResponse = 'Partial<Response>';
+
+    beforeEach(() => {
+        // mockRequest = {};
+        // mockResponse = {
+        //     json: jest.fn()
+        // };
+        jest.clearAllMocks();
+    });
+
+    it('without headers', async () => {
+        // const expectedResponse = {
+        //     "error": "Missing JWT token from the 'Authorization' header"
+        // };
+        requireAuth(req, null, next)
+
+        expect(next).toHaveBeenCalled();
+    });
+});
+
+describe('Require Admin middleware', () => {
+    // let mockRequest = 'Partial<Request>';
+    // let mockResponse = 'Partial<Response>';
+
+    beforeEach(() => {
+        // mockRequest = {};
+        // mockResponse = {
+        //     json: jest.fn()
+        // };
+        jest.clearAllMocks();
+    });
+
+    it('without headers', async () => {
+        // const expectedResponse = {
+        //     "error": "Missing JWT token from the 'Authorization' header"
+        // };
+        requireAdmin(req, null, next)
+
+        expect(next).toHaveBeenCalled();
+    });
+});
