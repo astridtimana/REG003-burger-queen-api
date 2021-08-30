@@ -21,10 +21,12 @@ const signIn = async (req, res, next) => {
     }
 
     const user = await User.findOne({ email: email });
+   
     bcrypt.compare(password, user.password, (err, data) => {
+    
       if (err) {
         console.info(err);
-      } else if (data) {
+      } else if (!data) {
         return next(404);
       }
 

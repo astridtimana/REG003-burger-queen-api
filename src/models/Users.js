@@ -26,7 +26,7 @@ const userSchema = new Schema({
 
 userSchema.plugin(mongoosePaginate);
 
-userSchema.pre('save', async function(next){
+userSchema.pre('save', function(next){
   const user = this; //const
   if(!user.isModified('password')) return next()
 
