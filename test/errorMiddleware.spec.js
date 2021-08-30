@@ -35,19 +35,19 @@ describe('error', () => {
         errorHandler(error, mockRequest, mockResponse, next);
         expect(mockResponse.status).toHaveBeenCalledWith(500);
         expect(mockResponse.json).toHaveBeenCalledWith({statusCode:500, message:"Internal Server Error"});
-        expect(next).toHaveBeenCalledTimes(1);
+        expect(next).toHaveBeenCalled();
     })
     it('errorHandler - statusCode 401', () => {
         errorHandler(error2, mockRequest, mockResponse, next);
         expect(mockResponse.status).toHaveBeenCalledWith(401);
         expect(mockResponse.json).toHaveBeenCalledWith({statusCode:401, message:"Unauthorized"});
-        expect(next).toHaveBeenCalledTimes(2);
+        expect(next).toHaveBeenCalled();
     })
     it('errorHandler - empty statusCode ',  () => { // preguntar sobre async await
         errorHandler(error3, mockRequest, mockResponse, next);
         expect(mockResponse.status).toHaveBeenCalledWith(500);
         expect(mockResponse.json).toHaveBeenCalledWith({statusCode:500, message:"Internal server error"});
-        expect(next).toHaveBeenCalledTimes(3);
+        expect(next).toHaveBeenCalled();
     })
 
 });
