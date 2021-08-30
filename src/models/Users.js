@@ -35,20 +35,30 @@ userSchema.pre('save', function(next){
 
     user.password = passwordHash;
     next();
-  
   })
+})
 
+userSchema.pre('findOneAndUpdate', function(next){
+  const user = this; //const
+  if(!user._update.$set.password) return next()
+
+  bcrypt.hash(user._update.$set.password,10,(err, passwordHash) =>{
+    err && next(err);
+
+    user._update.$set.password = passwordHash;
+    next();
+  })
 })
 
 
-userSchema.methods.encryptPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
-};
+// userSchema.methods.encryptPassword = async (password) => {
+//   const salt = await bcrypt.genSalt(10);
+//   return bcrypt.hash(password, salt);
+// };
 
-userSchema.methods.comparePassword = function ( password) {
-  return bcrypt.compare(password, this.password)
-}
+// userSchema.methods.comparePassword = function ( password) {
+//   return bcrypt.compare(password, this.password)
+// }
 
 
 module.exports = model('Users', userSchema);
