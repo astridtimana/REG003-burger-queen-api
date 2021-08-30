@@ -24,7 +24,7 @@ const signIn = async (req, res, next) => {
     bcrypt.compare(password, user.password, (err, data) => {
       if (err) {
         console.info(err);
-      } else if (data) {
+      } else if (!data) {
         return next(404);
       }
 
